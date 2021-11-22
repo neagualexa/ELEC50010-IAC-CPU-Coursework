@@ -84,14 +84,6 @@ module control_signal (
 			IRWrite = 0;  
 			IorD = 0;	  			
 		end
-		// else if(state==EXECUTE) begin //1. change PC if operation is Branch/Jump 2.update ALUOut for indirect addressing(memory reference) 3. update the result to ALUOUT(R-Type)
-		// 	//PCWrite = (final_code==Branch type) 1:0; 
-		// 	//PCSource = (final_code==Branch type)? 2'b01:0; // Currently only jump is implemented
-		// 	PCWrite = (final_code == 6'b001000)? 1:0;
-		// 	PCSource = (final_code==6'b001000)? 2'b10:0; // Currently only jump is implemented
-		// 	IRWrite = 0;
-			
-		// end
 		else if(state==EXECUTE) begin
 			//Branch/JUMP instruction should be completed in the stage
 			//ALU related operation, so it could be R or I-type
@@ -127,18 +119,6 @@ module control_signal (
 				end
 			endcase	 
 		end
-		// else if(state==MEMORY_ACCESS) begin
-		// 	//R-type should/could be complete in this round
-		// 	PCWrite = 0;
-			
-		// 	MemRead = (final_code == 6'b100011)? 1:0;
-		// 	MemWrite = (final_code == 6'b101011)? 1:0;
-
-		// 	MemtoReg = (opcode == 0)? 0: i-tpye;
-		// 	RegWrite = (opcode == 0)? 0: i-type;
-			
-		// 	IorD = 1;
-		// end
 		else if(state==MEMORY_ACCESS) begin
 			//R-type could be complete in this round(not implementing it here because that would be gross)
 			//fetching data
@@ -174,55 +154,4 @@ module control_signal (
 			endcase
 		end
 	end
-
-	// always_comb begin
-	// 	//R type
-	// 	if(opcode == 0) begin
-	// 		//addu
-	// 		if(func_code==6'b100001) begin
-	// 			RegDst = 1;
-	// 			ALUSreA = 1;
-	// 			ALUSreB = 0;
-	// 			ALUctl = ADD;		
-	// 		end	
-	// 	end
-	// 	//addiu
-	// 	if(opcode==6'b001001) begin
-	// 		RegDst = 0
-	// 		if (STATE == WRITE_BACK)begin
-	// 			RegWrite = 1
-	// 		end
-    //         //MemWrite = 0;
-	// 		//MemtoReg = 0;
-			
-				
-	// 	end
-	// 	//lw 
-	// 	if(opcode == 6'b100011) begin //execute: aluout=A+IR sign extended; 
-	// 								  //mem_acc: mdr=mem[ALUout]; write: rt=mdr
-	// 		RegDst = 0;
-	// 		RegWrite = 1;
-	// 		ALUSreA = 1;
-	// 		ALUSreB = 2'b10;
-	// 		ALUctl = ADD;
-	// 		//PCWrite = 
-	// 		//PCWriteCond =
-	// 		IorD = 0; //address of ALUout through PC
-	// 		//MemRead = ((FETCH_INSTR==1) | (MEMORY_ACCESS)) ? 1 : 0;
-	// 		MemWrite = 0;
-	// 		MemtoReg = 1;
-	// 	end
-
-	// 	//sw
-	// 	if(opcode == 6'b101011) begin
-	// 		RegDst = X;
-	// 		RegWrite = 0;
-	// 		ALUSrcA = 1;
-	// 		ALUSrcB = 2'b10;
-	// 		MemtoReg = X;
-	// 		ALUctl = ADD;
-			
-	// 	end
-	// end
-
 endmodule : control_signal
