@@ -1,4 +1,4 @@
-module mux4to1 (
+module ALUmux4to1 (
     input logic[31:0] register_b,
     input logic[31:0] sign_extend,
     input logic[31:0] shift_2,
@@ -9,9 +9,9 @@ module mux4to1 (
     always @(*) begin
         case(ALUSrcB)
             0: ALUB = register_b;
-            1: ALUB = 32'b100;
+            1: ALUB = 32'h0004;
             2: ALUB = sign_extend;
-            default: ALUB = shift_2; 
+            3: ALUB = shift_2; 
         endcase   
     end
 endmodule

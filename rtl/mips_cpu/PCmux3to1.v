@@ -1,4 +1,4 @@
-module mux3to1 (
+module PCmux3to1 (
     input logic[31:0] ALU_result,
     input logic[31:0] Jump_address,
     input logic[31:0] ALUOut,
@@ -10,7 +10,7 @@ module mux3to1 (
         case(PCSource):
             0: PC = ALU_result;
             1: PC = ALUOut;
-            default PC = Jump_address;
+            2: PC = Jump_address;
         endcase
     end
     

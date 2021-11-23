@@ -16,6 +16,7 @@ module alu(
 
     assign zero = (ALU_result==0)? 1:0;
 
+//have to add all the basic alu instructions which are 15 in total 
 	always_comb begin
 		case(ALUOperation)
 	        AND: ALU_result = a & b;

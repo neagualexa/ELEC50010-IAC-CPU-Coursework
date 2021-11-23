@@ -6,11 +6,9 @@ endmodule
 
 always begin
     if (instruction [15] == 1) begin
-        assign sign_extended = 32'b11111111111111110000000000000000 + instruction
+        assign sign_extended = 32'hFF00 + instruction;
     end
     else begin
-        assign sign_extended = instruction>>16
+        assign sign_extended = 32'h0000 + instruction;
     end
-
-
 end

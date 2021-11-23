@@ -9,7 +9,7 @@ module instruction_reg(
 );
 
     always_ff(@posedge clk) begin
-        if(IRWrite) begin
+        if(IRWrite) begin //during DECODE
             instr31_26 <= memdata[31:26];
             instr25_21 <= memdata[25:21];
             instr20_16 <= memdata[20:16];

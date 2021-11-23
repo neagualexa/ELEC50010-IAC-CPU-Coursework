@@ -1,4 +1,4 @@
-// jr addu addui lw sw
+// top level CPU (will be connected to MEMORY in testbench)
 module mips_cpu_bus (
 	input logic clk,    
 	input logic reset, 

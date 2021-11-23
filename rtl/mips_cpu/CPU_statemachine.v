@@ -21,11 +21,12 @@ module CPU_statemachine (
             state <= state;
         end
         else begin
+            //what about jumps? we need to adapt the state machine for those !!!!
             if(state==FETCH_INSTR) state <= DECODE;
-            if(state==DECODE) state <= EXECUTE;
-            if(state==EXECUTE) state <= MEMORY_ACCESS;
-            if(state==MEMORY_ACCESS) state <= WRITE_BACK;
-            if(state==WRITE_BACK) state <= FETCH_INSTR;
+            else if(state==DECODE) state <= EXECUTE;
+            else if(state==EXECUTE) state <= MEMORY_ACCESS;
+            else if(state==MEMORY_ACCESS) state <= WRITE_BACK;
+            else if(state==WRITE_BACK) state <= FETCH_INSTR;
         end
     end
     
