@@ -52,7 +52,7 @@ module mips_cpu_bus (
 	logic[63:0] ALU_MULT_result;
 	logic[3:0] ALUctrl;
 	logic zero;
-	assign register_v0 = ALUOut;
+	assign register_v0 = ALUOut;  //FOR DEBUGGING CURRENTLY, but actually reg v0 is reg of index 2 in reg file							
 	logic[31:0] HI, LO;
 
 	//reg A & B & ALUout

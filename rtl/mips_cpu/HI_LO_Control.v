@@ -9,7 +9,7 @@ module HI_LO_Control(
     output LO,
 
 );
-    logic HI_Write,LO_Write; // no need for those as we do the assignments in always_ff
+    // no need for those as we do the assignments in always_ff
     logic[31:0] HI, LO,
     logic[5:0] final_code;
     assign final_code = (opcode==0) ? func_code : opcode;
