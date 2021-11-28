@@ -2,9 +2,9 @@ module alu(
 	input logic[3:0] ALUOperation,
 	input logic[31:0] b,
 	input logic[31:0] a,
+	input logic unsign,
 	output logic[31:0] ALU_result,
 	output logic[63:0] ALU_MULTorDIV_result,
-	input unsign,
 	output logic zero
 );
 
@@ -44,16 +44,16 @@ module alu(
 			A_unsign = {1'b0 + A};
 			B_unsign = {1'b0 + B};
 			case(ALUOperation)
-				AND: 					ALU_temp_result = A_unsign & B_unsign;
+				AND: 					ALU_temp_result = A_unsign & B_unsign;  
 				OR: 					ALU_temp_result = A_unsign | B_unsign;
 				XOR: 					ALU_temp_result = A_unsign ^ B_unsign;
-				ADD: 					ALU_temp_result = A_unsign + B_unsign;
+				ADD: 					ALU_temp_result = A_unsign + B_unsign;  //we might not need this
 				SUBTRACT: 				ALU_temp_result = A_unsign - B_unsign;
-				MULTIPLY:				begin 
+				MULTIPLY:				begin 									//mandatory
 											ALU_temp_MULTorDIV_result = A_unsign * B_unsign; // create[63:0] variable = A * B then divide variable to HI and LO regs
 											ALU_MULTorDIV_result = ALU_temp_MULTorDIV_result[63:0];
 										end
-				DIVIDE:					begin				
+				DIVIDE:					begin									//mandatory
 											quotient_unsign = A_unsign / B_unsign; 
 											remainder_unsign = A_unsign % B_unsign;
 											ALU_MULTorDIV_result = {quotient_unsign[31:0], remainder_unsign[31:0]};
@@ -69,7 +69,6 @@ module alu(
 				default: ALU_temp_result = 0;
 			endcase
 			ALU_result = ALU_temp_result[31:0];
-			
 		end 
 		else begin
 			case(ALUOperation)

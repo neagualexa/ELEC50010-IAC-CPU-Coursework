@@ -6,20 +6,20 @@ module alu_tb();
 	logic zero;
 
     typedef enum logic[3:0] {
-        ADD					= 4'b0000,
-		AND 				= 4'b0001,
-		SUBTRACT			= 4'b0010,
-        BIGGER_OR_EQUAL 	= 4'b0011,
-		BIGGER 				= 4'b0100,
-		SMALLER_OR_EQUAL 	= 4'b0101,
-		SMALLER 			= 4'b0110,
-		MULTIPLY			= 4'b0111,
-		DIVIDE 				= 4'b1000,
-		OR 					= 4'b1001,
-		XOR 				= 4'b1010,
-		SHIFT_LEFT 			= 4'b1011,
-		SHIFT_RIGHT 		= 4'b1100,
-		SHIFT_ARITHMETIC 	= 4'b1101
+        ADD 					= 4'b0000,
+        AND 					= 4'b0001,
+        SUBTRACT 				= 4'b0010,
+        SET_GREATER_OR_EQUAL	= 4'b0011,
+		SET_ON_GREATER_THAN 	= 4'b0100,
+		SET_LESS_OR_EQUAL 		= 4'b0101,
+        SET_ON_LESS_THAN 		= 4'b0110,
+		MULTIPLY 				= 4'b0111,
+		DIVIDE 					= 4'b1000,
+        OR 						= 4'b1001,
+		XOR 					= 4'b1010,
+		SHIFT_LEFT 				= 4'b1011,
+		SHIFT_RIGHT 			= 4'b1100,
+		SHIFT_RIGHT_SIGNED 		= 4'b1101,
 	} ALUOperation_t;
 
     initial begin
@@ -55,18 +55,22 @@ module alu_tb();
         ALUOperation = DIVIDE;
         #10
         assert(ALU_result == 5) $display("Successful - DIVIDE") else $display("Error - DIVIDE");
-        ALUOperation = BIGGER;
+        ALUOperation = SET_ON_GREATER_THAN;
         #10
-        assert(ALU_result == 1) $display("Successful - BIGGER") else $display("Error - BIGGER");
-        ALUOperation = SMALLER;
+        assert(ALU_result == 0) $display("Successful - SET_ON_GREATER_THAN") else $display("Error - SET_ON_GREATER_THAN");
+        assert(zero == 1);
+        ALUOperation = SET_ON_LESS_THAN;
         #10
-        assert(ALU_result == 0) $display("Successful - SMALLER") else $display("Error - SMALLER");
-        ALUOperation = BIGGER_OR_EQUAL;
+        assert(ALU_result == 1) $display("Successful - SET_ON_LESS_THAN") else $display("Error - SET_ON_LESS_THAN");
+        assert(zero == 0);
+        ALUOperation = SET_GREATER_OR_EQUAL;
         #10
-        assert(ALU_result == 1) $display("Successful - BIGGER_OR_EQUAL") else $display("Error - BIGGER_OR_EQUAL");
-        ALUOperation = SMALLER_OR_EQUAL;
+        assert(ALU_result == 0) $display("Successful - SET_GREATER_OR_EQUAL") else $display("Error - SET_GREATER_OR_EQUAL");
+        assert(zero == 1);
+        ALUOperation = SET_LESS_OR_EQUAL;
         #10
-        assert(ALU_result == 0) $display("Successful - SMALLER_OR_EQUAL") else $display("Error - SMALLER_OR_EQUAL");
+        assert(ALU_result == 1) $display("Successful - SET_LESS_OR_EQUAL") else $display("Error - SET_LESS_OR_EQUAL");
+        assert(zero == 0);
 
         #10
         a = 32'h8040;

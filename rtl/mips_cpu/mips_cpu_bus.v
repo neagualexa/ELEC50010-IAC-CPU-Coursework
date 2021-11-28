@@ -108,7 +108,7 @@ module mips_cpu_bus (
 	//ALUmux4to1
 	ALUmux4to1 ALUmux4to1(
 		.register_b(readdata2), .immediate(instr15_0), .ALUSrcB(ALUSrcB), 
-		.ALUB(ALUB)
+		.ALUB(ALUB), .opcode(Decodemux2to1[31:26])
 	);
 
 	//IR
@@ -150,7 +150,7 @@ module mips_cpu_bus (
 	//HI LO registers
 	HI_LO_Control HI_LO_Control(
 		.clk(clk), .reset(reset), .opcode(Decodemux2to1[31:26]), .func_code(Decodemux2to1[5:0]),
-		.regA(regA), .ALU_MULTorDIV_result(ALU_MULTorDIV_result), .HI(HI), .LO(LO)
+		.regA(regA), .ALU_MULTorDIV_result(ALU_MULTorDIV_result), .HI(HI), .LO(LO), .state(state)
 	);
 
 	//rightmost mux

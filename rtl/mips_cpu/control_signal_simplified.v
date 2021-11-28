@@ -3,21 +3,21 @@ module control_signal (
 	input logic[5:0] opcode,
 	input logic[5:0] func_code,
 	input logic[2:0] state,
-	output RegDst,
-	output RegWrite,
-	output ALUSrcA,
+	output logic RegDst,
+	output logic RegWrite,
+	output logic ALUSrcA,
 	output logic[1:0] ALUSrcB,
 	output logic[3:0] ALUctl,
 	output logic[1:0] PCSource,
-	output PCWrite,
-	output PCWriteCond,
-	output IorD,
-	output MemRead,
-	output MemWrite,
-	output MemtoReg,
-	output IRWrite,
-	output unsign,
-	output [3:0]byteenable, // added a new output byteenable 11/28 (would be use in memory access state)
+	output logic PCWrite,
+	output logic PCWriteCond,
+	output logic IorD,
+	output logic MemRead,
+	output logic MemWrite,
+	output logic MemtoReg,
+	output logic IRWrite,
+	output logic unsign,
+	output logic[3:0] byteenable, // added a new output byteenable 11/28 (would be use in memory access state)
 );
 
 	logic[5:0] final_code;
@@ -51,8 +51,8 @@ module control_signal (
 	
 	typedef enum logic[5:0] {
 		//R Type
-		ADDU 	= 6'b100001;
-		AND		= 6'b100100;
+		ADDU 	= 6'b100001; 
+		AND		= 6'b100100; 
 		DIV		= 6'b011010;
 		DIVU	= 6'b011011;
 		MULT	= 6'b011000;
@@ -91,7 +91,7 @@ module control_signal (
 
 	} final_code_list;
 	
-	initial begin
+	initial begin //Initiate block
 		MemRead = 0;
 		MemWrite = 0;
 		IRWrite = 0; 
@@ -99,7 +99,6 @@ module control_signal (
 	end
 
 	always_comb begin
-
 		RegDst = 0;
 		RegWrite = 0;
 		ALUSrcA = 1;
@@ -143,47 +142,51 @@ module control_signal (
 			//Branch/JUMP instruction should be completed in the stage
 			//ALU related operation, so it could be R or I-type
 			//final-code should be opcode for I-type/J-type and function-code for R-type 
+			//write LO and HI if needed : MTHI,MTLO,DIV,DIVU,MULT,MULTU
 			case(final_code):
 				//arithmetic purpose operation
 				
 				//R-ALU-TYPE
-				ADDU: begin
+				ADDU: begin //u here is a misnomer => no overflow check but A or B are signed
 					ALUSrcA = 1;
 					ALUSrcB = 2'b00;
+					unsign = 0;
 					ALUctl = ADD;
-					unsign = 1;
 				end
 
-				AND: begin
+				AND: begin 							//might need to be change
 					ALUSrcA = 1;
 					ALUSrcB = 2'b00;
+					unsign = 0;
 					ALUctl = AND;
 				end
 				
-				DIV: begin
+				DIV: begin // sign number
 					ALUSrcA = 1;
 					ALUSrcB = 2'b00;
+					unsign = 0;
 					ALUctl = DIVIDE;
 				end
 
-				DIVU: begin
+				DIVU: begin // u mean treat A and B as unsign number
 					ALUSrcA = 1;
 					ALUSrcB = 2'b00;
-					ALUctl = DIVIDE;
 					unsign = 1;
+					ALUctl = DIVIDE;
 				end
 
 				MULT: begin
 					ALUSrcA = 1;
 					ALUSrcB = 2'b00;
+					unsign = 0;
 					ALUctl = MULTIPLY;
 				end
 
 				MULTU: begin
 					ALUSrcA = 1;
 					ALUSrcB = 2'b00;
-					ALUctl = MULTIPLY;
 					unsign = 1;
+					ALUctl = MULTIPLY;
 				end
 
 				OR: begin
@@ -207,11 +210,18 @@ module control_signal (
 
 
 				//I-TYPE //R-ALU-TYPE
-				ADDIU: begin
+				ADDIU: begin //Put the sum of register rs and the sign-extended immediate into register rt
 					ALUSrcA = 1;
 					ALUSrcB = 2'b10; //picking 2 without the left-shift unit
+					unsign = 0;  // u here is a misnomer
 					ALUctl = ADD;
-					unsign = 1;
+					
+				end
+
+				ANDI: begin //zero extend is needed 
+					ALUSrcA = 1;
+					ALUSrcB = 2'b10; //sign-extend
+					ALUctl = AND;
 				end
 
 				SLTI: begin
@@ -270,7 +280,6 @@ module control_signal (
 			endcase	 
 		end
 		else if(state==MEMORY_ACCESS) begin
-			//R-type could be complete in this round(not implementing it here because that would be gross)
 			//fetching data and writing data
 			case(final_code):
 				LW: begin //Load data to the MDR
