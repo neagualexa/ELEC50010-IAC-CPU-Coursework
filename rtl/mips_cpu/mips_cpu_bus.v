@@ -49,7 +49,7 @@ module mips_cpu_bus (
 
 	//ALU Variable
     logic[31:0] ALU_result;
-	logic[63:0] ALU_MULT_result;
+	logic[63:0] ALU_MULTorDIV_result;
 	logic[3:0] ALUctrl;
 	logic zero;
 	assign register_v0 = ALUOut;  //FOR DEBUGGING CURRENTLY, but actually reg v0 is reg of index 2 in reg file							
@@ -144,13 +144,13 @@ module mips_cpu_bus (
 	//ALU
 	alu ALU(
 		.ALUOperation(ALUctl), .a(ALUAmux2to1), .b(ALUB),
-		.ALU_result(ALU_result), .zero(zero), .ALU_MULT_result(ALU_MULT_result);
+		.ALU_result(ALU_result), .zero(zero), .ALU_MULTorDIV_result(ALU_MULTorDIV_result);
 	);
 
 	//HI LO registers
 	HI_LO_Control HI_LO_Control(
 		.clk(clk), .reset(reset), .opcode(Decodemux2to1[31:26]), .func_code(Decodemux2to1[5:0]),
-		.regA(regA), .ALU_MULT_result(ALU_MULT_result), .HI(HI), .LO(LO)
+		.regA(regA), .ALU_MULTorDIV_result(ALU_MULTorDIV_result), .HI(HI), .LO(LO)
 	);
 
 	//rightmost mux

@@ -3,13 +3,20 @@ module alu(
 	input logic[31:0] b,
 	input logic[31:0] a,
 	output logic[31:0] ALU_result,
-	output logic[63:0] ALU_MULT_result,
+	output logic[63:0] ALU_MULTorDIV_result,
 	input unsign,
 	output logic zero
 );
 
-	logic[32:0] ALU_temp_result, B_unsign, A_unsign;
-	logic[65:0] ALU_temp_MULT_result;
+/*
+	ALU_MULTorDIV_result {} {}
+	DIV / => top {} & ALU_result
+	DIV % => bottom {}
+*/
+
+	logic[32:0] ALU_temp_result, B_unsign, A_unsign, quotient_unsign, remainder_unsign;
+	logic[65:0] ALU_temp_MULTorDIV_result;
+	logic[31:0] remainder, quotient;
 	
 	typedef enum logic[3:0] {
         ADD 					= 4'b0000,
@@ -42,8 +49,15 @@ module alu(
 				XOR: 					ALU_temp_result = A_unsign ^ B_unsign;
 				ADD: 					ALU_temp_result = A_unsign + B_unsign;
 				SUBTRACT: 				ALU_temp_result = A_unsign - B_unsign;
-				MULTIPLY:				ALU_temp_MULT_result = A_unsign * B_unsign; // create[63:0] variable = A * B then divide variable to HI and LO regs
-				DIVIDE:					ALU_temp_result = A_unsign / B_unsign;
+				MULTIPLY:				begin 
+											ALU_temp_MULTorDIV_result = A_unsign * B_unsign; // create[63:0] variable = A * B then divide variable to HI and LO regs
+											ALU_MULTorDIV_result = ALU_temp_MULTorDIV_result[63:0];
+										end
+				DIVIDE:					begin				
+											quotient_unsign = A_unsign / B_unsign; 
+											remainder_unsign = A_unsign % B_unsign;
+											ALU_MULTorDIV_result = {quotient_unsign[31:0], remainder_unsign[31:0]};
+										end
 				SET_GREATER_OR_EQUAL:	ALU_temp_result = (A_unsign >= B_unsign) ? 0 : 1;
 				SET_ON_GREATER_THAN:	ALU_temp_result = (A_unsign > B_unsign) ? 0 : 1;
 				SET_LESS_OR_EQUAL:		ALU_temp_result = (A_unsign <= B_unsign) ? 0 : 1;
@@ -55,7 +69,7 @@ module alu(
 				default: ALU_temp_result = 0;
 			endcase
 			ALU_result = ALU_temp_result[31:0];
-			ALU_MULT_result = ALU_temp_MULT_result[63:0];
+			
 		end 
 		else begin
 			case(ALUOperation)
@@ -64,8 +78,12 @@ module alu(
 				XOR: 					ALU_result = a ^ b;
 				ADD: 					ALU_result = a + b;
 				SUBTRACT: 				ALU_result = a - b;
-				MULTIPLY:				ALU_MULT_result = a * b;
-				DIVIDE:					ALU_result = a / b;
+				MULTIPLY:				ALU_MULTorDIV_result = a * b;
+				DIVIDE:					begin 										
+											remainder = a % b; //to do
+											quotient = a / b;
+											ALU_MULTorDIV_result = {quotient, remainder};
+										end				
 				SET_GREATER_OR_EQUAL:	ALU_result = (a >= b) ? 0 : 1;
 				SET_ON_GREATER_THAN:	ALU_result = (a > b) ? 0 : 1;
 				SET_LESS_OR_EQUAL:		ALU_result = (a <= b) ? 0 : 1;

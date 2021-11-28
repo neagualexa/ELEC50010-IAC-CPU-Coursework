@@ -4,7 +4,7 @@ module HI_LO_Control(
     input clk,
     input regA,
     input reset,
-    input ALU_MULT_result,
+    input ALU_MULTorDIV_result,
     output HI,
     output LO,
 
@@ -34,14 +34,15 @@ module HI_LO_Control(
                 end
 
                 MULT: begin
-                    HI <= ALU_MULT_result[63:32];
-                    LO <= ALU_MULT_result[31:0];
+                    HI <= ALU_MULTorDIV_result[63:32];
+                    LO <= ALU_MULTorDIV_result[31:0];
                 end
 
                 MULTU: begin
-                    HI <= ALU_MULT_result[63:32];
-                    LO <= ALU_MULT_result[31:0];
+                    HI <= ALU_MULTorDIV_result[63:32];
+                    LO <= ALU_MULTorDIV_result[31:0];
                 end
+            endcase
         end
     end
 
