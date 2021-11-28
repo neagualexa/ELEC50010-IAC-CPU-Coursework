@@ -1,0 +1,1 @@
+iverilog -g 2012 -Wall -o CPU_testbench *.v CPU_ram/ram_tiny_CPU.v
