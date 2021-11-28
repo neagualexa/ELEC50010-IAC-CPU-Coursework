@@ -5,8 +5,8 @@ module control_signal (
 	input logic[2:0] state,
 	output RegDst,
 	output RegWrite,
-	output ALUSreA,
-	output logic[1:0] ALUSreB,
+	output ALUSrcA,
+	output logic[1:0] ALUSrcB,
 	output logic[3:0] ALUctl,
 	output logic[1:0] PCSource,
 	output PCWrite,
@@ -16,6 +16,7 @@ module control_signal (
 	output MemWrite,
 	output MemtoReg,
 	output IRWrite,
+	output unsign,
 	output [3:0]byteenable, // added a new output byteenable 11/28 (would be use in memory access state)
 );
 
@@ -48,17 +49,46 @@ module control_signal (
 
 	assign final_code = (opcode==0)? func_code : opcode;
 	
-	//ADDU 000000 100001
-	//ADDIU 001001
-	//JR 000000 001000
-	//LW 100011
-	//SW 101011
 	typedef enum logic[5:0] {
+		//R Type
 		ADDU 	= 6'b100001;
+		AND		= 6'b100100;
+		DIV		= 6'b011010;
+		DIVU	= 6'b011011;
+		MULT	= 6'b011000;
+		MULTU	= 6'b011001;
+		OR		= 6'b100101;
+		SUBU	= 6'b100011;
+		XOR		= 6'b100110;
+
+		MTHI	= 6'b010001;
+		MTLO	= 6'b010011;
+
+		SLL		= 6'b000000;
+		SLLV	= 6'b000100;
+		SLT 	= 6'b101010;
+		SLTU	= 6'b101011;
+		SRA		= 6'b000011;
+		SRAV	= 6'b000111;
+		SRL		= 6'b000010;
+		SRLV	= 6'b000110;
+
+		//I Types
 		ADDIU 	= 6'b001001;
-		JR 		= 6'b001000;
+		SLTI 	= 6'b001010;
+		SLTIU 	= 6'b001011;
+		ANDI 	= 6'b001100;
+		ORI 	= 6'b001101;
+		XORI 	= 6'b001110;
+
+		//load/store
 		LW 		= 6'b100011;
 		SW 		= 6'b101011;
+
+		//Jumps
+		JR 		= 6'b001000;
+		JALR	= 6'b001001;
+
 	} final_code_list;
 	
 	initial begin
@@ -72,8 +102,8 @@ module control_signal (
 
 		RegDst = 0;
 		RegWrite = 0;
-		ALUSreA = 1;
-		ALUSreB = 0;
+		ALUSrcA = 1;
+		ALUSrcB = 0;
 		ALUctl = 0;
 		PCSource = 0;
 		PCWrite = 0;
@@ -83,12 +113,13 @@ module control_signal (
 		MemRead = 0;
 		MemWrite = 0;
 		MemtoReg = 0;
+		unsign = 0;
 	// we should set everything to their default values for every instruction fetched ????????????????? make sure
 		
 
 		if(state==FETCH_INSTR) begin //Two function need to be done in IF 1.instruction_register<=memory(pc) 2.pc+4
-			ALUSreA = 0; //ALU To compute PC+4
-			ALUSreB = 2'b01;
+			ALUSrcA = 0; //ALU To compute PC+4
+			ALUSrcB = 2'b01;
 			ALUctl = ADD;
 
 			PCWrite = 1; //PC
@@ -114,17 +145,107 @@ module control_signal (
 			//final-code should be opcode for I-type/J-type and function-code for R-type 
 			case(final_code):
 				//arithmetic purpose operation
+				
+				//R-ALU-TYPE
 				ADDU: begin
-					ALUSreA = 1;
-					ALUSreB = 2'b00;
+					ALUSrcA = 1;
+					ALUSrcB = 2'b00;
 					ALUctl = ADD;
+					unsign = 1;
 				end
+
+				AND: begin
+					ALUSrcA = 1;
+					ALUSrcB = 2'b00;
+					ALUctl = AND;
+				end
+				
+				DIV: begin
+					ALUSrcA = 1;
+					ALUSrcB = 2'b00;
+					ALUctl = DIVIDE;
+				end
+
+				DIVU: begin
+					ALUSrcA = 1;
+					ALUSrcB = 2'b00;
+					ALUctl = DIVIDE;
+					unsign = 1;
+				end
+
+				MULT: begin
+					ALUSrcA = 1;
+					ALUSrcB = 2'b00;
+					ALUctl = MULTIPLY;
+				end
+
+				MULTU: begin
+					ALUSrcA = 1;
+					ALUSrcB = 2'b00;
+					ALUctl = MULTIPLY;
+					unsign = 1;
+				end
+
+				OR: begin
+					ALUSrcA = 1;
+					ALUSrcB = 2'b00;
+					ALUctl = OR;
+				end
+
+				XOR: begin
+					ALUSrcA = 1;
+					ALUSrcB = 2'b00;
+					ALUctl = XOR;
+				end
+
+				SUBU: begin
+					ALUSrcA = 1;
+					ALUSrcB = 2'b00;
+					ALUctl = SUBTRACT;
+					unsign = 1;
+				end
+
+
+				//I-TYPE //R-ALU-TYPE
 				ADDIU: begin
 					ALUSrcA = 1;
 					ALUSrcB = 2'b10; //picking 2 without the left-shift unit
 					ALUctl = ADD;
+					unsign = 1;
+				end
+
+				SLTI: begin
+					ALUSrcA = 1;
+					ALUSrcB = 2'b10; //picking 2 without the left-shift unit (Sign Extend)
+					ALUctl = SET_ON_LESS_THAN;
+				end
+
+				SLTIU: begin
+					ALUSrcA = 1;
+					ALUSrcB = 2'b10; //picking 2 without the left-shift unit (Sign Extend)
+					ALUctl = SET_ON_LESS_THAN;
+					unsign = 1;
+				end
+
+				ANDI: begin
+					ALUSrcA = 1;
+					ALUSrcB = 2'b10; //picking 2 without the left-shift unit (Sign Extend)
+					ALUctl = AND;
+				end
+
+				ORI: begin
+					ALUSrcA = 1;
+					ALUSrcB = 2'b10; //picking 2 without the left-shift unit (Sign Extend)
+					ALUctl = OR;
+				end
+
+				XORI: begin
+					ALUSrcA = 1;
+					ALUSrcB = 2'b10; //picking 2 without the left-shift unit (Sign Extend)
+					ALUctl = XOR;
 				end
 				
+
 				//LW SW(Memory reference)
 				LW: begin
 					ALUSrcA = 1;
@@ -136,6 +257,8 @@ module control_signal (
 					ALUSrcB = 2'b11; //picking 3 with the left-shift unit
 					ALUctl = ADD;
 				end
+
+
 				//JR (JUMPINGGGGG) ;)
 				JR: begin
 					ALUSrcA = 1;
@@ -169,10 +292,13 @@ module control_signal (
 					RegDst = 0; //depends on the format of the mips
 					MemtoReg = 1; //memory To register
 				end
+
+			//no need?????? RegDst and MemtoReg are already set to 0 when initialised in this state loop
 				ADD: begin
 					RegDst = 0;
 					MemtoReg = 0;//ALU To register
 				end
+
 				ADDIU: begin
 					RegDst = 0;
 					MemtoReg = 0;

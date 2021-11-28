@@ -49,9 +49,11 @@ module mips_cpu_bus (
 
 	//ALU Variable
     logic[31:0] ALU_result;
+	logic[63:0] ALU_MULT_result;
 	logic[3:0] ALUctrl;
 	logic zero;
 	assign register_v0 = ALUOut;
+	logic[31:0] HI, LO;
 
 	//reg A & B & ALUout
 	logic[31:0] regA, regB, ALUOut;
@@ -62,7 +64,7 @@ module mips_cpu_bus (
 	logic[1:0] ALUSrcB, PCSource;
 	logic[3:0] ALUctl;
 	logic PCWrite, PCWriteCond; //combines in gates and added into PC block for conditional jumps
-	logic IorD, MemRead, MemWrite, MemtoReg, IRWrite;
+	logic IorD, MemRead, MemWrite, MemtoReg, IRWrite, unsign;
 
 	//ALUmux4to1
 	logic[31:0] ALUB;
@@ -92,7 +94,7 @@ module mips_cpu_bus (
 		.ALUSrcB(ALUSrcB), .ALUctl(ALUctl), .PCSource(PCSource),
 		.PCWrite(PCWrite), .PCWriteCond(PCWriteCond), .IorD(IorD), 
 		.MemRead(read), .MemWrite(write), .MemtoReg(MemtoReg),
-		.IRWrite(IRWrite)
+		.IRWrite(IRWrite), .unsign(unsign)
 	);
 	
 	//MUXes
@@ -142,7 +144,13 @@ module mips_cpu_bus (
 	//ALU
 	alu ALU(
 		.ALUOperation(ALUctl), .a(ALUAmux2to1), .b(ALUB),
-		.ALU_result(ALU_result), .zero(zero)
+		.ALU_result(ALU_result), .zero(zero), .ALU_MULT_result(ALU_MULT_result);
+	);
+
+	//HI LO registers
+	HI_LO_Control HI_LO_Control(
+		.clk(clk), .reset(reset), .opcode(Decodemux2to1[31:26]), .func_code(Decodemux2to1[5:0]),
+		.regA(regA), .ALU_MULT_result(ALU_MULT_result), .HI(HI), .LO(LO)
 	);
 
 	//rightmost mux
