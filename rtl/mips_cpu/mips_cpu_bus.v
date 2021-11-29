@@ -98,8 +98,8 @@ module mips_cpu_bus (
 	);
 	
 	//MUXes
-	assign MEMmux2to1 = (IorD == 0) ? PC : ALUOut;
-	assign address = MEMmux2to1;
+	assign address = (IorD == 0) ? PC : ALUOut; //MEMmux2to1
+	//assign address = MEMmux2to1;
 	assign Regmux2to1 = (RegDst == 0) ? Decodemux2to1[20:16] : Decodemux2to1[15:11];
 	assign RegWritemux2to1 = (MemtoReg == 0) ? ALUOut : readdata;
 	assign ALUAmux2to1 = (ALUSrcA == 0) ? PC : regA; 

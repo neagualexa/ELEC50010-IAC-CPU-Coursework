@@ -295,12 +295,16 @@ module control_signal_simplified (
 					end
 				endcase
 			end
-			else if (opcode > 1) begin
+			else if (opcode == 1) begin
+				
+			end
+			else begin
 				case(opcode)
 					LW: begin //Load data to the MDR
 						IorD = 1;
-						MemtoReg = 1;
+						MemRead = 1; 
 					end
+					
 					SW: begin //store data
 						IorD = 1;
 						MemWrite = 1;
@@ -322,7 +326,7 @@ module control_signal_simplified (
 
 				endcase
 			end*/
-			if (opcode > 1) begin	
+			//if (opcode > 1) begin	
 				case(opcode)
 					//R U 1.Loading data to reg or 2.ALUOut to reg
 					LW: begin
@@ -330,7 +334,7 @@ module control_signal_simplified (
 						MemtoReg = 1; //memory To register
 					end	
 				endcase
-			end
+			//end
 		end
 	end
 endmodule : control_signal_simplified

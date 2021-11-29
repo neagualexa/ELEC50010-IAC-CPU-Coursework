@@ -21,7 +21,7 @@ module alu(
 	
 	typedef enum logic[3:0] {
         ADD 					= 4'b0000,
-        AND 					= 4'b0001,
+        LOGICAL_AND 			= 4'b0001,
         SUBTRACT 				= 4'b0010,
         SET_GREATER_OR_EQUAL	= 4'b0011,
 		SET_ON_GREATER_THAN 	= 4'b0100,
@@ -29,8 +29,8 @@ module alu(
         SET_ON_LESS_THAN 		= 4'b0110,
 		MULTIPLY 				= 4'b0111,
 		DIVIDE 					= 4'b1000,
-        OR 						= 4'b1001,
-		XOR 					= 4'b1010,
+        LOGICAL_OR 				= 4'b1001,
+		LOGICAL_XOR 			= 4'b1010,
 		SHIFT_LEFT 				= 4'b1011,
 		SHIFT_RIGHT 			= 4'b1100,
 		SHIFT_RIGHT_SIGNED 		= 4'b1101
@@ -44,9 +44,9 @@ module alu(
 	always @(*) begin
 		if(unsign) begin 
 			case(ALUOperation)
-				AND: 					ALU_temp_result = A_unsign & B_unsign;  
-				OR: 					ALU_temp_result = A_unsign | B_unsign;
-				XOR: 					ALU_temp_result = A_unsign ^ B_unsign;
+				LOGICAL_AND: 			ALU_temp_result = A_unsign & B_unsign;  //bitwise 
+				LOGICAL_OR: 			ALU_temp_result = A_unsign | B_unsign;
+				LOGICAL_XOR: 			ALU_temp_result = A_unsign ^ B_unsign;
 				ADD: 					ALU_temp_result = A_unsign + B_unsign;  //we might not need this
 				SUBTRACT: 				ALU_temp_result = A_unsign - B_unsign;
 				MULTIPLY:				begin 									//mandatory
@@ -72,9 +72,9 @@ module alu(
 		end 
 		else begin
 			case(ALUOperation)
-				AND: 					ALU_result = a & b;
-				OR: 					ALU_result = a | b;
-				XOR: 					ALU_result = a ^ b;
+				LOGICAL_AND: 			ALU_result = a & b;
+				LOGICAL_OR: 			ALU_result = a | b;
+				LOGICAL_XOR: 			ALU_result = a ^ b;
 				ADD: 					ALU_result = a + b;
 				SUBTRACT: 				ALU_result = a - b;
 				MULTIPLY:				ALU_MULTorDIV_result = a * b;
@@ -91,7 +91,7 @@ module alu(
 				SHIFT_LEFT:				ALU_result = a << b;
 				SHIFT_RIGHT_SIGNED:		ALU_result = a >>> b;
 				//NOR: ALU_temp_result = ~ (a | b); 
-				default: ALU_temp_result = 0;
+				default: ALU_result = 0;
 			endcase
 		end
 	end
