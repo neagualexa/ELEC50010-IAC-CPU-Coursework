@@ -3,6 +3,8 @@ module alu(
 	input logic[31:0] a,
 	input logic[31:0] b,
 	input logic unsign,
+	input logic fixed_shift,
+	input logic[4:0] instr10_6,
 	output logic[31:0] ALU_result,
 	output logic[63:0] ALU_MULTorDIV_result,
 	output logic zero
@@ -44,10 +46,10 @@ module alu(
 	always @(*) begin
 		if(unsign) begin 
 			case(ALUOperation)
-				LOGICAL_AND: 			ALU_temp_result = A_unsign & B_unsign;  //bitwise 
-				LOGICAL_OR: 			ALU_temp_result = A_unsign | B_unsign;
-				LOGICAL_XOR: 			ALU_temp_result = A_unsign ^ B_unsign;
-				ADD: 					ALU_temp_result = A_unsign + B_unsign;  //we might not need this
+				// LOGICAL_AND: 			ALU_temp_result = A_unsign & B_unsign;  //bitwise 
+				// LOGICAL_OR: 			ALU_temp_result = A_unsign | B_unsign;
+				// LOGICAL_XOR: 			ALU_temp_result = A_unsign ^ B_unsign;
+				// ADD: 					ALU_temp_result = A_unsign + B_unsign;  //we might not need this
 				SUBTRACT: 				ALU_temp_result = A_unsign - B_unsign;
 				MULTIPLY:				begin 									//mandatory
 											ALU_temp_MULTorDIV_result = A_unsign * B_unsign; // create[63:0] variable = A * B then divide variable to HI and LO regs
@@ -58,13 +60,13 @@ module alu(
 											remainder_unsign = A_unsign % B_unsign;
 											ALU_MULTorDIV_result = {quotient_unsign[31:0], remainder_unsign[31:0]};
 										end
-				SET_GREATER_OR_EQUAL:	ALU_temp_result = (A_unsign >= B_unsign) ? 0 : 1;
-				SET_ON_GREATER_THAN:	ALU_temp_result = (A_unsign > B_unsign) ? 0 : 1;
-				SET_LESS_OR_EQUAL:		ALU_temp_result = (A_unsign <= B_unsign) ? 0 : 1;
-				SET_ON_LESS_THAN:		ALU_temp_result = (A_unsign < B_unsign) ? 0 : 1;
-				SHIFT_RIGHT:			ALU_temp_result = A_unsign >> B_unsign; 
-				SHIFT_LEFT:				ALU_temp_result = A_unsign << B_unsign;
-				SHIFT_RIGHT_SIGNED:		ALU_temp_result = A_unsign >>> B_unsign;
+				//SET_GREATER_OR_EQUAL:	ALU_temp_result = (A_unsign >= B_unsign) ? 0 : 1;
+				//SET_ON_GREATER_THAN:	ALU_temp_result = (A_unsign > B_unsign) ? 0 : 1;
+				//SET_LESS_OR_EQUAL:		ALU_temp_result = (A_unsign <= B_unsign) ? 0 : 1;
+				SET_ON_LESS_THAN:		ALU_temp_result = (A_unsign < B_unsign) ? 1 : 0; // For less then IF a < b result need to be 1 unfortunaly
+				// SHIFT_RIGHT:			ALU_temp_result = A_unsign >> B_unsign; 
+				// SHIFT_LEFT:				ALU_temp_result = A_unsign << B_unsign;
+				// SHIFT_RIGHT_SIGNED:		ALU_temp_result = A_unsign >>> B_unsign;
 				//NOR: ALU_temp_result = ~ (a | b); 
 				default: ALU_temp_result = 0;
 			endcase
@@ -79,21 +81,24 @@ module alu(
 				SUBTRACT: 				ALU_result = a - b;
 				MULTIPLY:				ALU_MULTorDIV_result = a * b;
 				DIVIDE:					begin 										
-											remainder = a % b; //to do
+											remainder = a % b;
 											quotient = a / b;
 											ALU_MULTorDIV_result = {quotient, remainder};
 										end				
 				SET_GREATER_OR_EQUAL:	ALU_result = (a >= b) ? 0 : 1;
 				SET_ON_GREATER_THAN:	ALU_result = (a > b) ? 0 : 1;
 				SET_LESS_OR_EQUAL:		ALU_result = (a <= b) ? 0 : 1;
-				SET_ON_LESS_THAN:		ALU_result = (a < b) ? 0 : 1;
-				SHIFT_RIGHT:			ALU_result = a >> b;
-				SHIFT_LEFT:				ALU_result = a << b;
-				SHIFT_RIGHT_SIGNED:		ALU_result = a >>> b;
+				SET_ON_LESS_THAN:		ALU_result = (a < b) ? 1 : 0; // For less then IF a < b result need to be 1 unfortunaly
+				// SHIFTS can be done by a fixed immediate or by a value of a register
+				SHIFT_RIGHT:			ALU_result = (fixed_shift == 1) ? b >> instr10_6 : b >> a;
+				SHIFT_LEFT:				ALU_result = (fixed_shift == 1) ? b << instr10_6 : b << a;
+				SHIFT_RIGHT_SIGNED:		ALU_result = (fixed_shift == 1) ? b >>> instr10_6 : b >>> a;
 				//NOR: ALU_temp_result = ~ (a | b); 
 				default: ALU_result = 0;
 			endcase
 		end
+		$display("a = %b", a);
+		$display("b = %b", b);
 	end
 
 endmodule : alu

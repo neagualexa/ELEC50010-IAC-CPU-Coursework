@@ -4,6 +4,7 @@ module pc(
     input logic pcctl,
     input logic[31:0] pc_prev,
     output logic[31:0] pc_new
+
 );
     always_ff @(posedge clk) begin
         if(reset) begin

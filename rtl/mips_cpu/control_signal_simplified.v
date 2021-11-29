@@ -17,6 +17,7 @@ module control_signal_simplified (
 	output logic MemtoReg,
 	output logic IRWrite,
 	output logic unsign,
+	output logic fixed_shift,
 	output logic[3:0] byteenable // added a new output byteenable 11/28 (would be use in memory access state)
 );
 
@@ -116,6 +117,7 @@ module control_signal_simplified (
 		MemWrite = 0;
 		MemtoReg = 0;
 		unsign = 0;
+		fixed_shift = 0;
 	// we should set everything to their default values for every instruction fetched ????????????????? make sure
 		
 
@@ -195,37 +197,97 @@ module control_signal_simplified (
 					OR: begin
 						ALUSrcA = 1;
 						ALUSrcB = 2'b00;
-						ALUctl = LOGICAL_OR;
+						unsign = 0;
+						ALUctl = LOGICAL_OR;	
 					end
 
 					XOR: begin
 						ALUSrcA = 1;
 						ALUSrcB = 2'b00;
+						unsign = 0;
 						ALUctl = LOGICAL_XOR;
 					end
 
 					SUBU: begin
 						ALUSrcA = 1;
 						ALUSrcB = 2'b00;
-						ALUctl = SUBTRACT;
 						unsign = 1;
+						ALUctl = SUBTRACT;
 					end
+
+					SLT: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
+						unsign = 0;
+						ALUctl = SET_ON_LESS_THAN;
+					end
+
+					SLTU: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
+						unsign = 1;
+						ALUctl = SET_ON_LESS_THAN;
+					end
+
+					SLL: begin 							
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
+						fixed_shift = 1;
+						ALUctl = SHIFT_LEFT;
+						unsign = 0;
+					end
+
+					SLLV: begin 							
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
+						fixed_shift = 0;
+						ALUctl = SHIFT_LEFT;
+						unsign = 0;
+					end
+
+					SRL: begin 							
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
+						fixed_shift = 1;
+						ALUctl = SHIFT_RIGHT;
+						unsign = 0;
+					end
+
+					SRLV: begin 							
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
+						fixed_shift = 0;
+						ALUctl = SHIFT_RIGHT;
+						unsign = 0;
+					end
+
+					SRA: begin 							
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
+						fixed_shift = 1;
+						ALUctl = SHIFT_RIGHT_SIGNED;
+						unsign = 0;
+					end
+
+					SRAV: begin 							
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
+						fixed_shift = 0;
+						ALUctl = SHIFT_RIGHT_SIGNED;
+						unsign = 0;
+					end
+
+					default: ALUctl = 4'hX;
 				endcase
 			end
 			else if (opcode > 1) begin
 				case(opcode)
-					//I-TYPE //R-ALU-TYPE
+					//I-TYPE
 					ADDIU: begin //Put the sum of register rs and the sign-extended immediate into register rt
 						ALUSrcA = 1;
 						ALUSrcB = 2'b10; //picking 2 without the left-shift unit
 						unsign = 0;  // u here is a misnomer
 						ALUctl = ADD;
-					end
-
-					ANDI: begin //zero extend is needed 
-						ALUSrcA = 1;
-						ALUSrcB = 2'b10; //sign-extend
-						ALUctl = AND;
 					end
 
 					SLTI: begin
@@ -243,32 +305,27 @@ module control_signal_simplified (
 
 					ANDI: begin
 						ALUSrcA = 1;
-						ALUSrcB = 2'b10; //picking 2 without the left-shift unit (Sign Extend)
-						ALUctl = AND;
+						ALUSrcB = 2'b10; //picking 2 without the left-shift unit (Zero-Extend)
+						ALUctl = LOGICAL_AND;
 					end
 
 					ORI: begin
 						ALUSrcA = 1;
-						ALUSrcB = 2'b10; //picking 2 without the left-shift unit (Sign Extend)
-						ALUctl = OR;
+						ALUSrcB = 2'b10; //picking 2 without the left-shift unit (Zero-Extend)
+						ALUctl = LOGICAL_OR;
 					end
 
 					XORI: begin
 						ALUSrcA = 1;
-						ALUSrcB = 2'b10; //picking 2 without the left-shift unit (Sign Extend)
-						ALUctl = XOR;
+						ALUSrcB = 2'b10; //picking 2 without the left-shift unit (Zero-Extend)
+						ALUctl = LOGICAL_XOR;
 					end
 					
 
 					//LW SW(Memory reference)
-					LW: begin
+					LW, SW: begin
 						ALUSrcA = 1;
 						ALUSrcB = 2'b11; //picking 3 with the left-shift unit => so that we an address which is div by 4
-						ALUctl = ADD;
-					end
-					SW: begin
-						ALUSrcA = 1;
-						ALUSrcB = 2'b11; //picking 3 with the left-shift unit
 						ALUctl = ADD;
 					end
 
@@ -279,6 +336,11 @@ module control_signal_simplified (
 						ALUSrcB = 2'b00; //picking 0: register B which should be 0. 0 register 
 						// MUST ASSUME register rs is div by 4 for a good jump 
 						// would make a bus check by ANDing the address from rs with hFFF0 (just cause)
+
+
+						// FOR JUMP AND RELATED INSTRUCTION : BRANCH DELAYED INSTRUCTION EXECUT FIRST
+
+						
 						ALUctl = ADD;
 					end
 				endcase
@@ -288,15 +350,30 @@ module control_signal_simplified (
 			//fetching data and writing data
 			if (opcode == 0) begin
 				case(func_code)
-					ADDU: begin
+					ADDU,SUBU: begin
 						RegWrite = 1;
 						RegDst = 1;
 						MemtoReg = 0;//ALU To register
 					end
+					AND,XOR,OR: begin
+						RegWrite = 1;
+						RegDst = 1;
+						MemtoReg = 0;
+					end
+					SLL, SLLV, SRL, SRLV, SRA, SRAV: begin
+						RegWrite = 1;
+						RegDst = 1;
+						MemtoReg = 0;
+					end
+					SLT, SLTU: begin
+						RegWrite = 1;
+						RegDst = 1;
+						MemtoReg = 0;
+					end			
 				endcase
 			end
 			else if (opcode == 1) begin
-				
+			//JUMP
 			end
 			else begin
 				case(opcode)
@@ -315,26 +392,34 @@ module control_signal_simplified (
 						RegDst = 0;
 						MemtoReg = 0;
 					end
+
+					SLTI,SLTIU: begin
+						RegWrite = 1;
+						RegDst = 0;
+						MemtoReg = 0;
+					end
+
+					ANDI,ORI,XORI: begin
+						RegWrite = 1;
+						RegDst = 0;
+						MemtoReg = 0;
+					end
+		
 				endcase
 			end
 			
 		end
 		else if(state==WRITE_BACK) begin
-			RegWrite = 1;
-			/*if (opcode == 0) begin
-				case(func_code)
-
-				endcase
-			end*/
-			//if (opcode > 1) begin	
+			if (opcode > 1) begin	
 				case(opcode)
 					//R U 1.Loading data to reg or 2.ALUOut to reg
 					LW: begin
+						RegWrite = 1;
 						RegDst = 0; //depends on the format of the mips
 						MemtoReg = 1; //memory To register
-					end	
+					end
 				endcase
-			//end
+			end
 		end
 	end
 endmodule : control_signal_simplified

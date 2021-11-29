@@ -30,7 +30,9 @@ module mips_cpu_bus (
     logic[4:0] instr20_16;
     logic[15:0] instr15_0;
 	logic[4:0] instr15_11;
+	logic[4:0] instr10_6;
 	assign instr15_11 = readdata[15:11];
+	assign instr10_6 = readdata[10:6];
 	
 	//pc
 	logic pc_ctl;
@@ -64,7 +66,7 @@ module mips_cpu_bus (
 	logic[1:0] ALUSrcB, PCSource;
 	logic[3:0] ALUctl;
 	logic PCWrite, PCWriteCond; //combines in gates and added into PC block for conditional jumps
-	logic IorD, MemRead, MemWrite, MemtoReg, IRWrite, unsign;
+	logic IorD, MemtoReg, IRWrite, unsign, fixed_shift;
 
 	//ALUmux4to1
 	logic[31:0] ALUB;
@@ -94,7 +96,7 @@ module mips_cpu_bus (
 		.ALUSrcB(ALUSrcB), .ALUctl(ALUctl), .PCSource(PCSource),
 		.PCWrite(PCWrite), .PCWriteCond(PCWriteCond), .IorD(IorD), 
 		.MemRead(read), .MemWrite(write), .MemtoReg(MemtoReg),
-		.IRWrite(IRWrite), .unsign(unsign)
+		.IRWrite(IRWrite), .unsign(unsign), .fixed_shift(fixed_shift)
 	);
 	
 	//MUXes
@@ -103,7 +105,7 @@ module mips_cpu_bus (
 	assign Regmux2to1 = (RegDst == 0) ? Decodemux2to1[20:16] : Decodemux2to1[15:11];
 	assign RegWritemux2to1 = (MemtoReg == 0) ? ALUOut : readdata;
 	assign ALUAmux2to1 = (ALUSrcA == 0) ? PC : regA; 
-	
+
 	
 	//ALUmux4to1
 	ALUmux4to1 ALUmux4to1(
@@ -144,8 +146,16 @@ module mips_cpu_bus (
 	//ALU
 	alu ALU(
 		.ALUOperation(ALUctl), .a(ALUAmux2to1), .b(ALUB), .unsign(unsign),
-		.ALU_result(ALU_result), .zero(zero), .ALU_MULTorDIV_result(ALU_MULTorDIV_result)
+		.ALU_result(ALU_result), .zero(zero), .ALU_MULTorDIV_result(ALU_MULTorDIV_result),
+		.instr10_6(instr10_6), .fixed_shift(fixed_shift)
 	);
+
+	
+	// always @(*) begin
+	// 	$display("state = %b, full_instr = %h, readR1 = %h, regA = %h, RegWrite = %h", state, full_instr, readR1, regA, RegWrite);
+	// 	//$display("ALU_result = %h", ALU_result);
+	// end
+	
 
 	//HI LO registers
 	HI_LO_Control HI_LO_Control(
