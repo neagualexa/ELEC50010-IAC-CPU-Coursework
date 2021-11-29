@@ -1,7 +1,7 @@
 module alu(
 	input logic[3:0] ALUOperation,
-	input logic[31:0] b,
 	input logic[31:0] a,
+	input logic[31:0] b,
 	input logic unsign,
 	output logic[31:0] ALU_result,
 	output logic[63:0] ALU_MULTorDIV_result,
@@ -17,6 +17,7 @@ module alu(
 	logic[32:0] ALU_temp_result, B_unsign, A_unsign, quotient_unsign, remainder_unsign;
 	logic[65:0] ALU_temp_MULTorDIV_result;
 	logic[31:0] remainder, quotient;
+
 	
 	typedef enum logic[3:0] {
         ADD 					= 4'b0000,
@@ -32,17 +33,16 @@ module alu(
 		XOR 					= 4'b1010,
 		SHIFT_LEFT 				= 4'b1011,
 		SHIFT_RIGHT 			= 4'b1100,
-		SHIFT_RIGHT_SIGNED 		= 4'b1101,
+		SHIFT_RIGHT_SIGNED 		= 4'b1101
 	} ALUOperation_t;
 
-
+	assign A_unsign = {1'b0 + a};
+	assign B_unsign = {1'b0 + b};
     assign zero = (ALU_temp_result==0) ? 1 : 0;
 	
 //have to add all the basic alu instructions which are 15 in total 
-	always_comb begin
+	always @(*) begin
 		if(unsign) begin 
-			A_unsign = {1'b0 + A};
-			B_unsign = {1'b0 + B};
 			case(ALUOperation)
 				AND: 					ALU_temp_result = A_unsign & B_unsign;  
 				OR: 					ALU_temp_result = A_unsign | B_unsign;
@@ -62,9 +62,9 @@ module alu(
 				SET_ON_GREATER_THAN:	ALU_temp_result = (A_unsign > B_unsign) ? 0 : 1;
 				SET_LESS_OR_EQUAL:		ALU_temp_result = (A_unsign <= B_unsign) ? 0 : 1;
 				SET_ON_LESS_THAN:		ALU_temp_result = (A_unsign < B_unsign) ? 0 : 1;
+				SHIFT_RIGHT:			ALU_temp_result = A_unsign >> B_unsign; 
 				SHIFT_LEFT:				ALU_temp_result = A_unsign << B_unsign;
-				SHIFT_RIGHT:			ALU_temp_result = A_unsign >> B_unsign;
-				SHIFT_ARITHMETIC:		ALU_temp_result = A_unsign >>> B_unsign;
+				SHIFT_RIGHT_SIGNED:		ALU_temp_result = A_unsign >>> B_unsign;
 				//NOR: ALU_temp_result = ~ (a | b); 
 				default: ALU_temp_result = 0;
 			endcase
@@ -87,9 +87,9 @@ module alu(
 				SET_ON_GREATER_THAN:	ALU_result = (a > b) ? 0 : 1;
 				SET_LESS_OR_EQUAL:		ALU_result = (a <= b) ? 0 : 1;
 				SET_ON_LESS_THAN:		ALU_result = (a < b) ? 0 : 1;
-				SHIFT_LEFT:				ALU_result = a << b;
 				SHIFT_RIGHT:			ALU_result = a >> b;
-				SHIFT_ARITHMETIC:		ALU_result = a >>> b;
+				SHIFT_LEFT:				ALU_result = a << b;
+				SHIFT_RIGHT_SIGNED:		ALU_result = a >>> b;
 				//NOR: ALU_temp_result = ~ (a | b); 
 				default: ALU_temp_result = 0;
 			endcase

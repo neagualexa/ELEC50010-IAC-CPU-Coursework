@@ -4,6 +4,7 @@ module alu_tb();
 	logic[31:0] a;
 	logic[31:0] ALU_result;
 	logic zero;
+    logic[63:0] ALU_MULTorDIV_result;
 
     typedef enum logic[3:0] {
         ADD 					= 4'b0000,
@@ -19,7 +20,7 @@ module alu_tb();
 		XOR 					= 4'b1010,
 		SHIFT_LEFT 				= 4'b1011,
 		SHIFT_RIGHT 			= 4'b1100,
-		SHIFT_RIGHT_SIGNED 		= 4'b1101,
+		SHIFT_RIGHT_SIGNED 		= 4'b1101
 	} ALUOperation_t;
 
     initial begin
@@ -88,7 +89,8 @@ module alu_tb();
 
     alu dut(
         .ALUOperation(ALUOperation), .b(b),
-        .a(a),.ALU_result(ALU_result), .zero(zero)
+        .a(a),.ALU_result(ALU_result), .zero(zero), 
+        .ALU_MULTorDIV_result(ALU_MULTorDIV_result)
     );
 
 endmodule

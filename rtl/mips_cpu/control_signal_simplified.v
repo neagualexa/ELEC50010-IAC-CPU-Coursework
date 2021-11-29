@@ -1,5 +1,5 @@
 // jr addu addui lw sw
-module control_signal (
+module control_signal_simplified (
 	input logic[5:0] opcode,
 	input logic[5:0] func_code,
 	input logic[2:0] state,
@@ -17,14 +17,14 @@ module control_signal (
 	output logic MemtoReg,
 	output logic IRWrite,
 	output logic unsign,
-	output logic[3:0] byteenable, // added a new output byteenable 11/28 (would be use in memory access state)
+	output logic[3:0] byteenable // added a new output byteenable 11/28 (would be use in memory access state)
 );
 
-	logic[5:0] final_code;
+	//logic[5:0] final_code;
 
 	typedef enum logic[3:0] {
         ADD 					= 4'b0000,
-        AND 					= 4'b0001,
+        LOGICAL_AND 			= 4'b0001,
         SUBTRACT 				= 4'b0010,
         SET_GREATER_OR_EQUAL	= 4'b0011,
 		SET_ON_GREATER_THAN 	= 4'b0100,
@@ -32,64 +32,67 @@ module control_signal (
         SET_ON_LESS_THAN 		= 4'b0110,
 		MULTIPLY 				= 4'b0111,
 		DIVIDE 					= 4'b1000,
-        OR 						= 4'b1001,
-		XOR 					= 4'b1010,
+        LOGICAL_OR 				= 4'b1001,
+		LOGICAL_XOR 			= 4'b1010,
 		SHIFT_LEFT 				= 4'b1011,
 		SHIFT_RIGHT 			= 4'b1100,
-		SHIFT_RIGHT_SIGNED 		= 4'b1101,
+		SHIFT_RIGHT_SIGNED 		= 4'b1101
 	} ALUOperation_t;
 
-	typedef enum logic[2:0] {
+	typedef enum logic[2:0]{
         FETCH_INSTR 			= 3'b000,
         DECODE 					= 3'b001,
         EXECUTE 				= 3'b010,
         MEMORY_ACCESS 			= 3'b011,
-        WRITE_BACK 				= 3'b100,
+        WRITE_BACK 				= 3'b100
     } state_t;
-
-	assign final_code = (opcode==0)? func_code : opcode;
 	
 	typedef enum logic[5:0] {
-		//R Type
-		ADDU 	= 6'b100001; 
-		AND		= 6'b100100; 
-		DIV		= 6'b011010;
-		DIVU	= 6'b011011;
-		MULT	= 6'b011000;
-		MULTU	= 6'b011001;
-		OR		= 6'b100101;
-		SUBU	= 6'b100011;
-		XOR		= 6'b100110;
+		//R Type - func_code
+		ADDU 	= 6'b100001,
+		AND		= 6'b100100, 
+		DIV		= 6'b011010,
+		DIVU	= 6'b011011,
+		MULT	= 6'b011000,
+		MULTU	= 6'b011001,
+		OR		= 6'b100101,
+		SUBU	= 6'b100011,
+		XOR		= 6'b100110,
 
-		MTHI	= 6'b010001;
-		MTLO	= 6'b010011;
+		MTHI	= 6'b010001,
+		MTLO	= 6'b010011,
 
-		SLL		= 6'b000000;
-		SLLV	= 6'b000100;
-		SLT 	= 6'b101010;
-		SLTU	= 6'b101011;
-		SRA		= 6'b000011;
-		SRAV	= 6'b000111;
-		SRL		= 6'b000010;
-		SRLV	= 6'b000110;
+		SLL		= 6'b000000,
+		SLLV	= 6'b000100,
+		SLT 	= 6'b101010,
+		SLTU	= 6'b101011,
+		SRA		= 6'b000011,
+		SRAV	= 6'b000111,
+		SRL		= 6'b000010,
+		SRLV	= 6'b000110,
 
-		//I Types
-		ADDIU 	= 6'b001001;
-		SLTI 	= 6'b001010;
-		SLTIU 	= 6'b001011;
-		ANDI 	= 6'b001100;
-		ORI 	= 6'b001101;
-		XORI 	= 6'b001110;
+		JALR	= 6'b001001
+	} func_code_list;
+
+	typedef enum logic[5:0] {
+		//I Types - opcode
+		ADDIU 	= 6'b001001,
+		SLTI 	= 6'b001010,
+		SLTIU 	= 6'b001011,
+		ANDI 	= 6'b001100,
+		ORI 	= 6'b001101,
+		XORI 	= 6'b001110,
 
 		//load/store
-		LW 		= 6'b100011;
-		SW 		= 6'b101011;
+		LW 		= 6'b100011,
+		SW 		= 6'b101011,
 
 		//Jumps
-		JR 		= 6'b001000;
-		JALR	= 6'b001001;
+		JR 		= 6'b001000
+	} opcode_list;
 
-	} final_code_list;
+	//assign final_code = (opcode==0) ? func_code : opcode;
+	//assign final_code = (opcode==1) ? rt[4:0] : opcode; //BLTZ, BGEZ, BLTZAL, BGEZAL
 	
 	initial begin //Initiate block
 		MemRead = 0;
@@ -133,7 +136,6 @@ module control_signal (
 			ALUctl = ADD;
 
 			PCWrite = 0; //close PC
-			IRWrite = 0; //currently close IR
 
 			MemRead = 0;  
 			IRWrite = 1;  // is 1 in  DECODE stage	
@@ -143,177 +145,192 @@ module control_signal (
 			//ALU related operation, so it could be R or I-type
 			//final-code should be opcode for I-type/J-type and function-code for R-type 
 			//write LO and HI if needed : MTHI,MTLO,DIV,DIVU,MULT,MULTU
-			case(final_code):
-				//arithmetic purpose operation
-				
-				//R-ALU-TYPE
-				ADDU: begin //u here is a misnomer => no overflow check but A or B are signed
-					ALUSrcA = 1;
-					ALUSrcB = 2'b00;
-					unsign = 0;
-					ALUctl = ADD;
-				end
-
-				AND: begin 							//might need to be change
-					ALUSrcA = 1;
-					ALUSrcB = 2'b00;
-					unsign = 0;
-					ALUctl = AND;
-				end
-				
-				DIV: begin // sign number
-					ALUSrcA = 1;
-					ALUSrcB = 2'b00;
-					unsign = 0;
-					ALUctl = DIVIDE;
-				end
-
-				DIVU: begin // u mean treat A and B as unsign number
-					ALUSrcA = 1;
-					ALUSrcB = 2'b00;
-					unsign = 1;
-					ALUctl = DIVIDE;
-				end
-
-				MULT: begin
-					ALUSrcA = 1;
-					ALUSrcB = 2'b00;
-					unsign = 0;
-					ALUctl = MULTIPLY;
-				end
-
-				MULTU: begin
-					ALUSrcA = 1;
-					ALUSrcB = 2'b00;
-					unsign = 1;
-					ALUctl = MULTIPLY;
-				end
-
-				OR: begin
-					ALUSrcA = 1;
-					ALUSrcB = 2'b00;
-					ALUctl = OR;
-				end
-
-				XOR: begin
-					ALUSrcA = 1;
-					ALUSrcB = 2'b00;
-					ALUctl = XOR;
-				end
-
-				SUBU: begin
-					ALUSrcA = 1;
-					ALUSrcB = 2'b00;
-					ALUctl = SUBTRACT;
-					unsign = 1;
-				end
-
-
-				//I-TYPE //R-ALU-TYPE
-				ADDIU: begin //Put the sum of register rs and the sign-extended immediate into register rt
-					ALUSrcA = 1;
-					ALUSrcB = 2'b10; //picking 2 without the left-shift unit
-					unsign = 0;  // u here is a misnomer
-					ALUctl = ADD;
+			if (opcode == 0) begin
+				case(func_code)
+					//arithmetic purpose operation
 					
-				end
+					//R-ALU-TYPE
+					ADDU: begin //u here is a misnomer => no overflow check but A or B are signed
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
+						unsign = 0;
+						ALUctl = ADD;
+					end
 
-				ANDI: begin //zero extend is needed 
-					ALUSrcA = 1;
-					ALUSrcB = 2'b10; //sign-extend
-					ALUctl = AND;
-				end
+					AND: begin 							//might need to be change
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
+						unsign = 0;
+						ALUctl = LOGICAL_AND;
+					end
+					
+					DIV: begin // sign number
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
+						unsign = 0;
+						ALUctl = DIVIDE;
+					end
 
-				SLTI: begin
-					ALUSrcA = 1;
-					ALUSrcB = 2'b10; //picking 2 without the left-shift unit (Sign Extend)
-					ALUctl = SET_ON_LESS_THAN;
-				end
+					DIVU: begin // u mean treat A and B as unsign number
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
+						unsign = 1;
+						ALUctl = DIVIDE;
+					end
 
-				SLTIU: begin
-					ALUSrcA = 1;
-					ALUSrcB = 2'b10; //picking 2 without the left-shift unit (Sign Extend)
-					ALUctl = SET_ON_LESS_THAN;
-					unsign = 1;
-				end
+					MULT: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
+						unsign = 0;
+						ALUctl = MULTIPLY;
+					end
 
-				ANDI: begin
-					ALUSrcA = 1;
-					ALUSrcB = 2'b10; //picking 2 without the left-shift unit (Sign Extend)
-					ALUctl = AND;
-				end
+					MULTU: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
+						unsign = 1;
+						ALUctl = MULTIPLY;
+					end
 
-				ORI: begin
-					ALUSrcA = 1;
-					ALUSrcB = 2'b10; //picking 2 without the left-shift unit (Sign Extend)
-					ALUctl = OR;
-				end
+					OR: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
+						ALUctl = LOGICAL_OR;
+					end
 
-				XORI: begin
-					ALUSrcA = 1;
-					ALUSrcB = 2'b10; //picking 2 without the left-shift unit (Sign Extend)
-					ALUctl = XOR;
-				end
-				
+					XOR: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
+						ALUctl = LOGICAL_XOR;
+					end
 
-				//LW SW(Memory reference)
-				LW: begin
-					ALUSrcA = 1;
-					ALUSrcB = 2'b11; //picking 3 with the left-shift unit => so that we an address which is div by 4
- 					ALUctl = ADD;
-				end
-				SW: begin
-					ALUSrcA = 1;
-					ALUSrcB = 2'b11; //picking 3 with the left-shift unit
-					ALUctl = ADD;
-				end
+					SUBU: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
+						ALUctl = SUBTRACT;
+						unsign = 1;
+					end
+				endcase
+			end
+			else if (opcode > 1) begin
+				case(opcode)
+					//I-TYPE //R-ALU-TYPE
+					ADDIU: begin //Put the sum of register rs and the sign-extended immediate into register rt
+						ALUSrcA = 1;
+						ALUSrcB = 2'b10; //picking 2 without the left-shift unit
+						unsign = 0;  // u here is a misnomer
+						ALUctl = ADD;
+					end
+
+					ANDI: begin //zero extend is needed 
+						ALUSrcA = 1;
+						ALUSrcB = 2'b10; //sign-extend
+						ALUctl = AND;
+					end
+
+					SLTI: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b10; //picking 2 without the left-shift unit (Sign Extend)
+						ALUctl = SET_ON_LESS_THAN;
+					end
+
+					SLTIU: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b10; //picking 2 without the left-shift unit (Sign Extend)
+						ALUctl = SET_ON_LESS_THAN;
+						unsign = 1;
+					end
+
+					ANDI: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b10; //picking 2 without the left-shift unit (Sign Extend)
+						ALUctl = AND;
+					end
+
+					ORI: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b10; //picking 2 without the left-shift unit (Sign Extend)
+						ALUctl = OR;
+					end
+
+					XORI: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b10; //picking 2 without the left-shift unit (Sign Extend)
+						ALUctl = XOR;
+					end
+					
+
+					//LW SW(Memory reference)
+					LW: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b11; //picking 3 with the left-shift unit => so that we an address which is div by 4
+						ALUctl = ADD;
+					end
+					SW: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b11; //picking 3 with the left-shift unit
+						ALUctl = ADD;
+					end
 
 
-				//JR (JUMPINGGGGG) ;)
-				JR: begin
-					ALUSrcA = 1;
-					ALUSrcB = 2'b00; //picking 0: register B which should be 0. 0 register 
-					// MUST ASSUME register rs is div by 4 for a good jump 
-					// would make a bus check by ANDing the address from rs with hFFF0 (just cause)
-					ALUctl = ADD;
-				end
-			endcase	 
+					//JR (JUMPINGGGGG) ;)
+					JR: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00; //picking 0: register B which should be 0. 0 register 
+						// MUST ASSUME register rs is div by 4 for a good jump 
+						// would make a bus check by ANDing the address from rs with hFFF0 (just cause)
+						ALUctl = ADD;
+					end
+				endcase
+			end 
 		end
 		else if(state==MEMORY_ACCESS) begin
 			//fetching data and writing data
-			case(final_code):
-				LW: begin //Load data to the MDR
-					IorD = 1;
-	 				MemtoReg = 1;
-				end
-				SW: begin //store data
-					IorD = 1;
-					MemWrite = 1;
-				end
-			endcase
+			if (opcode == 0) begin
+				case(func_code)
+					ADDU: begin
+						RegWrite = 1;
+						RegDst = 1;
+						MemtoReg = 0;//ALU To register
+					end
+				endcase
+			end
+			else if (opcode > 1) begin
+				case(opcode)
+					LW: begin //Load data to the MDR
+						IorD = 1;
+						MemtoReg = 1;
+					end
+					SW: begin //store data
+						IorD = 1;
+						MemWrite = 1;
+					end
+
+					ADDIU: begin
+						RegWrite = 1;
+						RegDst = 0;
+						MemtoReg = 0;
+					end
+				endcase
+			end
 			
 		end
 		else if(state==WRITE_BACK) begin
 			RegWrite = 1;
-			case(final_code):
-				//R U 1.Loading data to reg or 2.ALUOut to reg
-				LW: begin
-					RegDst = 0; //depends on the format of the mips
-					MemtoReg = 1; //memory To register
-				end
+			/*if (opcode == 0) begin
+				case(func_code)
 
-			//no need?????? RegDst and MemtoReg are already set to 0 when initialised in this state loop
-				ADD: begin
-					RegDst = 0;
-					MemtoReg = 0;//ALU To register
-				end
-
-				ADDIU: begin
-					RegDst = 0;
-					MemtoReg = 0;
-				end
-				
-			endcase
+				endcase
+			end*/
+			if (opcode > 1) begin	
+				case(opcode)
+					//R U 1.Loading data to reg or 2.ALUOut to reg
+					LW: begin
+						RegDst = 0; //depends on the format of the mips
+						MemtoReg = 1; //memory To register
+					end	
+				endcase
+			end
 		end
 	end
-endmodule : control_signal
+endmodule : control_signal_simplified

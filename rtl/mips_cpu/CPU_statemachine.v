@@ -6,11 +6,11 @@ module CPU_statemachine (
 );
     
     typedef enum logic[2:0]{
-        FETCH_INSTR = 3'b000,
-        DECODE = 3'b001,
-        EXECUTE = 3'b010,
-        MEMORY_ACCESS = 3'b011,
-        WRITE_BACK = 3'b100
+        FETCH_INSTR     = 3'b000,
+        DECODE          = 3'b001,
+        EXECUTE         = 3'b010,
+        MEMORY_ACCESS   = 3'b011,
+        WRITE_BACK      = 3'b100
     } state_t;
     
     always @(posedge clk) begin

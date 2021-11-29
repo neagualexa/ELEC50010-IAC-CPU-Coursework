@@ -9,10 +9,10 @@ module ALUmux4to1 (
     logic[31:0] shift_2;
 
     typedef enum logic[5:0]{
-        ANDI 	= 6'b001100;
-		ORI 	= 6'b001101;
-		XORI 	= 6'b001110; 
-    } Zero_extend_opcode;
+        ANDI 	= 6'b001100,
+		ORI 	= 6'b001101,
+		XORI 	= 6'b001110
+    }Zero_extend_opcode;
 
     always @(*) begin
     //sign extend

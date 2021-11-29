@@ -1,17 +1,15 @@
 module HI_LO_Control( // added states & reset
-    input logic opcode,
+    input logic[5:0] opcode,
     input logic[2:0] state,
-    input logic func_code,
+    input logic[5:0] func_code,
     input logic clk,
-    input logic regA,
     input logic reset,
-    input logic ALU_MULTorDIV_result,
-    output logic HI,
-    output logic LO,
-
+    input logic[31:0] regA,
+    input logic[63:0] ALU_MULTorDIV_result,
+    output logic[31:0] HI,
+    output logic[31:0] LO
 );
     // no need for those as we do the assignments in always_ff
-    logic[31:0] HI, LO,
     logic[5:0] final_code;
     assign final_code = (opcode==0) ? func_code : opcode;
 
@@ -20,16 +18,16 @@ module HI_LO_Control( // added states & reset
         DECODE 					= 3'b001,
         EXECUTE 				= 3'b010,
         MEMORY_ACCESS 			= 3'b011,
-        WRITE_BACK 				= 3'b100,
+        WRITE_BACK 				= 3'b100
     } state_t;
 
     typedef enum logic[5:0]{
-        MTHI	= 6'b010001;
-	    MTLO	= 6'b010011;
-        MULT	= 6'b011000;
-		MULTU	= 6'b011001;
-        DIV     = 6'b011010;
-        DIVU    = 6'b011011;
+        MTHI	= 6'b010001,
+	    MTLO	= 6'b010011,
+        MULT	= 6'b011000,
+		MULTU	= 6'b011001,
+        DIV     = 6'b011010,
+        DIVU    = 6'b011011
     }final_code_list;
     
 
@@ -39,7 +37,7 @@ module HI_LO_Control( // added states & reset
             HI <= 0;
         end
         if (final_code != 0 && state == EXECUTE) begin
-            case(final_code):
+            case(final_code)
                 MTHI: begin
                     HI <= regA;
                 end

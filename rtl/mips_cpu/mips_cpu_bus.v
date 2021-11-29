@@ -143,8 +143,8 @@ module mips_cpu_bus (
 	
 	//ALU
 	alu ALU(
-		.ALUOperation(ALUctl), .a(ALUAmux2to1), .b(ALUB),
-		.ALU_result(ALU_result), .zero(zero), .ALU_MULTorDIV_result(ALU_MULTorDIV_result);
+		.ALUOperation(ALUctl), .a(ALUAmux2to1), .b(ALUB), .unsign(unsign),
+		.ALU_result(ALU_result), .zero(zero), .ALU_MULTorDIV_result(ALU_MULTorDIV_result)
 	);
 
 	//HI LO registers
