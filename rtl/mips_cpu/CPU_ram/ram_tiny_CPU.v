@@ -7,7 +7,7 @@ module ram_tiny_CPU (
     input logic[31:0] writedata,
     output logic[31:0] readdata
 );
-    parameter RAM_INIT_FILE = "./CPU_ram/bitwise_logic.txt";
+    parameter RAM_INIT_FILE = "./CPU_ram/Mult_test.txt";
 
     reg [31:0] memory [4095 :0];
 

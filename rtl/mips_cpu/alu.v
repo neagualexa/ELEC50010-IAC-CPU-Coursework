@@ -97,8 +97,8 @@ module alu(
 				default: ALU_result = 0;
 			endcase
 		end
-		$display("a = %b", a);
-		$display("b = %b", b);
+		//$display("a = %b", a);
+		//$display("b = %b", b);
 	end
 
 endmodule : alu

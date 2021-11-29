@@ -1,5 +1,5 @@
 100011 00000 00001 0000 0000 0000 0101
-8C010006
+8C010005
 opcode rs    rt    offset //LW r[1] = MEM(rs+offset*4) result r[1]= 
 
 100011 00000 00010 0000 0000 0000 0110
@@ -7,16 +7,16 @@ opcode rs    rt    offset //LW r[1] = MEM(rs+offset*4) result r[1]=
 opcode rs    rt    offset //LW r[2] = MEM(rs+offset*4) result r[2]= 
 
 100011 00000 00011 0000 0000 0000 0111
-8C030006
+8C030007
 opcode rs    rt    offset //LW r[2] = MEM(rs+offset*4) result r[3]=
 
 000000 00001 00010 00000 011000
 00011018
-opcode   rs   rt  // mult Rs * Rt check output registers HI and LO expected output 00100010
+opcode   rs   rt  // mult Rs * Rt check output registers HI and LO expected output 10000100
 
 000000 00010 00011 00000 011001
 00021819
-opcode   rs   rt  //multu Rs * Rt check output registers HI and LO 10000100
+opcode   rs   rt  //multu Rs * Rt check output registers HI and LO 00100010
 
 
 
