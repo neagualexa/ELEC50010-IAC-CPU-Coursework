@@ -28,10 +28,17 @@ module ram_tiny_CPU (
     always @(posedge clk) begin
         //$display("RAM : INFO : read=%h, addr = %h, mem=%h", read, address, memory[address]);
         if (write) begin
-            memory[address] <= writedata;
+            memory[address] <= writedata [7:0];
+            memory[address + 1] <= writedata [15:8];
+            memory[address + 2] <= writedata [23:16];
+            memory[address + 3] <= writedata [31:24];
         end
         else if(read) begin
-            readdata <= memory[address]; // Read-after-write mode
+            readdata [31:24] <= memory[address];
+            readdata [23:16] <= memory[address + 1];
+            readdata [15:8] <= memory[address + 2];
+            readdata [7:0] <= memory[address + 3];
+             // Read-after-write mode
         end
     end
 endmodule
