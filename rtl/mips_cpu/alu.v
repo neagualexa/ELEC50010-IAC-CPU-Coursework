@@ -19,6 +19,7 @@ module alu(
 	logic[32:0] ALU_temp_result, B_unsign, A_unsign, quotient_unsign, remainder_unsign;
 	logic[65:0] ALU_temp_MULTorDIV_result;
 	logic[31:0] remainder, quotient;
+	logic [63:0] A_extend, B_extend;
 
 	
 	typedef enum logic[3:0] {
@@ -79,7 +80,11 @@ module alu(
 				LOGICAL_XOR: 			ALU_result = a ^ b;
 				ADD: 					ALU_result = a + b;
 				SUBTRACT: 				ALU_result = a - b;
-				MULTIPLY:				ALU_MULTorDIV_result = a * b;
+				MULTIPLY:				begin
+											A_extend = (a[31] == 1) ? {32'hFFFFFFFF, a} : {32'h0, a};
+											B_extend = (b[31] == 1) ? {32'hFFFFFFFF, b} : {32'h0, b};
+											ALU_MULTorDIV_result = A_extend * B_extend;
+										end
 				DIVIDE:					begin 										
 											remainder = a % b;
 											quotient = a / b;

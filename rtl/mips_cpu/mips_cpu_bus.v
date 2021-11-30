@@ -151,10 +151,12 @@ module mips_cpu_bus (
 	);
 
 	
-	// always @(*) begin
-	// 	$display("state = %b, full_instr = %h, readR1 = %h, regA = %h, RegWrite = %h", state, full_instr, readR1, regA, RegWrite);
-	// 	//$display("ALU_result = %h", ALU_result);
-	// end
+	always @(*) begin
+		//$display("ALU_MULTorDIV_result = %h", ALU_MULTorDIV_result);
+		$display("ALUA = %b, ALUB = %b", ALUAmux2to1, ALUB);
+		//$display("state = %b, full_instr = %h, readR1 = %h, regA = %h, RegWrite = %h", state, full_instr, readR1, regA, RegWrite);
+		//$display("ALU_result = %h", ALU_result);
+	end
 	
 
 	//HI LO registers

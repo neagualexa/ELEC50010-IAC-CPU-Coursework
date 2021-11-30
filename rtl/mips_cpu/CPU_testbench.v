@@ -5,7 +5,7 @@ module CPU_testbench (
     logic[3:0] byteenable;
     logic[2:0] state;
     
-    parameter TIMEOUT_CYCLES = 41;
+    parameter TIMEOUT_CYCLES = 5*8+1;
 
     typedef enum logic[2:0] {
         FETCH_INSTR = 3'b000,
@@ -39,38 +39,38 @@ module CPU_testbench (
         @(negedge clk);
         reset = 0;
         //FETCH instr 1
-        $display("FETCH         - readdata: %h, ALUOut: %h", readdata, register_v0);
+        $display("FETCH         - readdata: %h, ALUOut: %b", readdata, register_v0);
 
         @(negedge clk);
         //DECODE instr 1
-        $display("DECODE        - readdata: %h, ALUOut: %h, opcode: %b", readdata, register_v0, readdata[31:26]);
+        $display("DECODE        - readdata: %h, ALUOut: %b, opcode: %b", readdata, register_v0, readdata[31:26]);
         @(negedge clk);
         //EX instr 1
-        $display("EXECUTE       - readdata: %h, ALUOut: %h, opcode: %b", readdata, register_v0, readdata[31:26]);
+        $display("EXECUTE       - readdata: %h, ALUOut: %b, opcode: %b", readdata, register_v0, readdata[31:26]);
         @(negedge clk);
         //MEMORY_ACCESS instr 1
-        $display("MEMORY_ACCESS - readdata: %h, ALUOut: %h, opcode: %b", readdata, register_v0, readdata[31:26]);
+        $display("MEMORY_ACCESS - readdata: %h, ALUOut: %b, opcode: %b", readdata, register_v0, readdata[31:26]);
         @(negedge clk);
         //WRITE_BACK instr 1
-        $display("WRITE_BACK    - readdata: %h, ALUOut: %h, opcode: %b", readdata, register_v0, readdata[31:26]);
+        $display("WRITE_BACK    - readdata: %h, ALUOut: %b, opcode: %b", readdata, register_v0, readdata[31:26]);
         $display("---------------------------------------------");
 
         repeat (TIMEOUT_CYCLES/5) begin
             @(negedge clk);
             //FETCH instr
-            $display("FETCH         - readdata: %h, ALUOut: %h", readdata, register_v0);
+            $display("FETCH         - readdata: %h, ALUOut: %b", readdata, register_v0);
             @(negedge clk);
             //DECODE instr
-            $display("DECODE        - readdata: %h, ALUOut: %h, opcode: %b", readdata, register_v0, readdata[31:26]);
+            $display("DECODE        - readdata: %h, ALUOut: %b, opcode: %b", readdata, register_v0, readdata[31:26]);
             @(negedge clk);
             //EXECUTE instr
-            $display("EXECUTE       - readdata: %h, ALUOut: %h, opcode: %b", readdata, register_v0, readdata[31:26]);
+            $display("EXECUTE       - readdata: %h, ALUOut: %b, opcode: %b", readdata, register_v0, readdata[31:26]);
             @(negedge clk);
             //MEMORY_ACCESS instr
-            $display("MEMORY_ACCESS - readdata: %h, ALUOut: %h, opcode: %b", readdata, register_v0, readdata[31:26]);
+            $display("MEMORY_ACCESS - readdata: %h, ALUOut: %b, opcode: %b", readdata, register_v0, readdata[31:26]);
             @(negedge clk);
             //WRITE_BACK instr
-            $display("WRITE_BACK    - readdata: %h, ALUOut: %h, opcode: %b", readdata, register_v0, readdata[31:26]);
+            $display("WRITE_BACK    - readdata: %h, ALUOut: %b, opcode: %b", readdata, register_v0, readdata[31:26]);
             $display("---------------------------------------------");
         end
         

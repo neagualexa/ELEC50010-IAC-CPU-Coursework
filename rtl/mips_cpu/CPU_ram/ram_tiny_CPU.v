@@ -7,7 +7,7 @@ module ram_tiny_CPU (
     input logic[31:0] writedata,
     output logic[31:0] readdata
 );
-    parameter RAM_INIT_FILE = "./CPU_ram/Mult_test.txt";
+    parameter RAM_INIT_FILE = "./CPU_ram/bitwise_logic.txt";
 
     reg [31:0] memory [4095 :0];
 
@@ -28,16 +28,29 @@ module ram_tiny_CPU (
     always @(posedge clk) begin
         //$display("RAM : INFO : read=%h, addr = %h, mem=%h", read, address, memory[address]);
         if (write) begin
-            memory[address] <= writedata [7:0];
-            memory[address + 1] <= writedata [15:8];
-            memory[address + 2] <= writedata [23:16];
-            memory[address + 3] <= writedata [31:24];
+            if (byteenable != 0) begin
+                
+            end
+            else begin
+                /*memory[address] <= writedata [7:0];
+                memory[address + 1] <= writedata [15:8];
+                memory[address + 2] <= writedata [23:16];
+                memory[address + 3] <= writedata [31:24];*/   
+            end
+            memory[address] <= writedata;
         end
         else if(read) begin
-            readdata [31:24] <= memory[address];
-            readdata [23:16] <= memory[address + 1];
-            readdata [15:8] <= memory[address + 2];
-            readdata [7:0] <= memory[address + 3];
+            if (byteenable != 0) begin
+                
+            end
+            else begin
+                /*readdata [31:24] <= memory[address];
+                readdata [23:16] <= memory[address + 1];
+                readdata [15:8] <= memory[address + 2];
+                readdata [7:0] <= memory[address + 3];*/   
+            end
+            
+            readdata <= memory[address];
              // Read-after-write mode
         end
     end

@@ -277,7 +277,7 @@ module control_signal_simplified (
 						unsign = 0;
 					end
 
-					default: ALUctl = 4'hX;
+					//default: ALUctl = 4'hX;
 				endcase
 			end
 			else if (opcode > 1) begin
