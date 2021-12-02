@@ -26,13 +26,13 @@ module mips_cpu_bus (
 	
 	//instruction register
 	logic[5:0] instr31_26;
-    logic[4:0] instr25_21;
-    logic[4:0] instr20_16;
-    logic[15:0] instr15_0;
+    	logic[4:0] instr25_21;
+    	logic[4:0] instr20_16;
+    	logic[15:0] instr15_0;
 	logic[4:0] instr15_11;
 	logic[4:0] instr10_6;
-	assign instr15_11 = readdata[15:11];
-	assign instr10_6 = readdata[10:6];
+	assign instr15_11 = readdata_to_CPU[15:11];
+	assign instr10_6 = readdata_to_CPU[10:6];
 	
 	//pc
 	logic pc_ctl;
@@ -73,7 +73,9 @@ module mips_cpu_bus (
 	logic[31:0] readdata1;
 	logic[31:0] readdata2;
 	
-	assign writedata = regB;
+	
+	logic[31:0] writedata_from_CPU, readdata_from_RAM, writedata_to_RAM, readdata_to_CPU;
+	assign writedata_from_CPU = regB;
 
 
 	//BLOCKS
@@ -88,7 +90,7 @@ module mips_cpu_bus (
 	//assign opcode = Decodemux2to1[31:26];
 	//assign func_code = Decodemux2to1[5:0];
 	assign full_instr = {instr31_26, instr25_21, instr20_16, instr15_0};
-	assign Decodemux2to1 = (state == 3'b001) ? readdata : full_instr; 
+	assign Decodemux2to1 = (state == 3'b001) ? readdata_to_CPU : full_instr; 
 
 	control_signal_simplified control(
 		.opcode(Decodemux2to1[31:26]), .func_code(Decodemux2to1[5:0]), .state(state),
@@ -103,7 +105,7 @@ module mips_cpu_bus (
 	assign address = (IorD == 0) ? PC : ALUOut; //MEMmux2to1
 	//assign address = MEMmux2to1;
 	assign Regmux2to1 = (RegDst == 0) ? Decodemux2to1[20:16] : Decodemux2to1[15:11];
-	assign RegWritemux2to1 = (MemtoReg == 0) ? ALUOut : readdata;
+	assign RegWritemux2to1 = (MemtoReg == 0) ? ALUOut : readdata_to_CPU;
 	assign ALUAmux2to1 = (ALUSrcA == 0) ? PC : regA; 
 
 	
@@ -115,7 +117,7 @@ module mips_cpu_bus (
 
 	//IR
 	instruction_reg IR(
-		.clk(clk), .reset(reset), .IRWrite(IRWrite), .memdata(readdata),
+		.clk(clk), .reset(reset), .IRWrite(IRWrite), .memdata(readdata_to_CPU),
 		.instr31_26(instr31_26), .instr25_21(instr25_21), .instr20_16(instr20_16),
 		.instr15_0(instr15_0)
 	);
@@ -150,13 +152,16 @@ module mips_cpu_bus (
 		.instr10_6(instr10_6), .fixed_shift(fixed_shift)
 	);
 
-	
+	/*
 	always @(*) begin
 		//$display("ALU_MULTorDIV_result = %h", ALU_MULTorDIV_result);
-		$display("ALUA = %b, ALUB = %b", ALUAmux2to1, ALUB);
+		//$display("ALUA = %b, ALUB = %b", ALUAmux2to1, ALUB);
 		//$display("state = %b, full_instr = %h, readR1 = %h, regA = %h, RegWrite = %h", state, full_instr, readR1, regA, RegWrite);
 		//$display("ALU_result = %h", ALU_result);
+		$display("writedata_from_CPU = %h, writedata = %h", writedata_from_CPU, writedata);
+		$display("readdata_to_CPU = %h, readdata = %h", readdata_to_CPU, readdata);
 	end
+	*/
 	
 
 	//HI LO registers
@@ -171,5 +176,11 @@ module mips_cpu_bus (
 		.instr25_21(Decodemux2to1[25:21]), .instr20_16(Decodemux2to1[20:16]), .instr15_0(Decodemux2to1[15:0]),
     	.PC_out(pc_in)
 	);
+	
+	endian_swap swap(
+    		.writedata_from_CPU(writedata_from_CPU), .readdata_from_RAM(readdata), 
+    		.writedata_to_RAM(writedata), .readdata_to_CPU(readdata_to_CPU)
+    	);
+    
 	
 endmodule : mips_cpu_bus
