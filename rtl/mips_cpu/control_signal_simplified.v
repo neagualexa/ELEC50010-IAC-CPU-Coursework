@@ -85,9 +85,17 @@ module control_signal_simplified (
 		XORI 	= 6'b001110,
 
 		//load/store
+		LUI		= 6'b001111,
+		LB		= 6'b100000,
+		LH 		= 6'b100001,
+		LWL		= 6'b100010,
 		LW 		= 6'b100011,
+		LBU		= 6'b100100,
+		LHU		= 6'b100101,
+		LWR		= 6'b100110,
+		SB      = 6'b101000,
+		SH		= 6'b101001,
 		SW 		= 6'b101011,
-
 		//Jumps
 		JR 		= 6'b001000
 	} opcode_list;
@@ -325,10 +333,29 @@ module control_signal_simplified (
 					//LW SW(Memory reference)
 					LW, SW: begin
 						ALUSrcA = 1;
-						ALUSrcB = 2'b11; //picking 3 with the left-shift unit => so that we an address which is div by 4
+						ALUSrcB = 2'b10; // shift left 2 is not needed
+						//ALUSrcB = 2'b11; picking 3 with the left-shift unit => so that we an address which is div by 4
 						ALUctl = ADD;
 					end
 
+					SB: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b10;
+						//ALUSrcB = 2'b11;
+						ALUctl = ADD;
+					end
+
+					LB: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b10;
+						
+					end
+
+					LWL: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b10;
+						ALUctl = ADD;
+					end
 
 					//JR (JUMPINGGGGG) ;)
 					JR: begin
@@ -380,6 +407,15 @@ module control_signal_simplified (
 					LW: begin //Load data to the MDR
 						IorD = 1;
 						MemRead = 1; 
+					end
+
+					LWL: begin //Load data on the left to unaligned word
+						
+					end
+					
+					SB: begin
+						IorD = 1;
+						MemWrite = 1;
 					end
 					
 					SW: begin //store data

@@ -105,5 +105,8 @@ module alu(
 		//$display("a = %b", a);
 		//$display("b = %b", b);
 	end
+	always@(*) begin
+    	$display("ALUSrcA = %b, ALUSrcB= %b",a, b);
+    end
 
 endmodule : alu

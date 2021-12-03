@@ -1,11 +1,11 @@
 100011 00000 00001 0000 0000 0000 1000
 1000 1100 0000 0001 0000 0000 0000 1000
 8    C    0    1    0    0    0    8
-opcode rs    rt    offset //LW r[1] = MEM(rs+offset*4) MEM[24] result r[1]= 1001 0001
+opcode rs    rt    offset //LW r[1] = MEM(rs+offset*4) MEM[24] result r[1]= 1001 0001 8'h91
 
 100011 00000 00010 0000 0000 0000 1001
 8    C    0    2    0    0    0    9
-opcode rs    rt    offset //LW r[2] = MEM(rs+offset*4) MEM[28] result r[2]= 1010 0101
+opcode rs    rt    offset //LW r[2] = MEM(rs+offset*4) MEM[28] result r[2]= 1010 0101 8'ha5
 
 000000 00001 00010 00011 00000 100100
 0000 0000 0010 0010 0001 1000 0010 0100

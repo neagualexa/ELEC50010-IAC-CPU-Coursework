@@ -61,7 +61,7 @@ module mips_cpu_bus (
 	logic[31:0] regA, regB, ALUOut;
 	
 	//control logic for MUXes
-	logic[5:0] opcode, func_code;
+	logic[5:0] func_code;
 	logic RegDst, RegWrite, ALUSrcA;
 	logic[1:0] ALUSrcB, PCSource;
 	logic[3:0] ALUctl;
@@ -83,7 +83,7 @@ module mips_cpu_bus (
 	CPU_statemachine stm(.reset(reset), .clk(clk), .stall(stall), .state(state));
 
 	assign pc_ctl = (PCWriteCond & zero) | PCWrite;
-	pc pc1(.clk(clk), .reset(reset), .pcctl(pc_ctl), .pc_prev(pc_in), .pc_new(PC));
+	pc pc1(.clk(clk), .reset(reset), .pcctl(pc_ctl), .pc_prev(pc_in), .pc_new(PC),.PCWriteCond(PCWriteCond),.state(state));
 	
 	//Control signals
 	
@@ -102,7 +102,8 @@ module mips_cpu_bus (
 	);
 	
 	//MUXes
-	assign address = (IorD == 0) ? PC : ALUOut; //MEMmux2to1
+	MEMmux MEMmux(.IorD(IorD), .ALUOut(ALUOut), .opcode(Decodemux2to1[31:26]),.byteenable(byteenable), .address(address),.PC(PC));
+	
 	//assign address = MEMmux2to1;
 	assign Regmux2to1 = (RegDst == 0) ? Decodemux2to1[20:16] : Decodemux2to1[15:11];
 	assign RegWritemux2to1 = (MemtoReg == 0) ? ALUOut : readdata_to_CPU;
@@ -114,7 +115,6 @@ module mips_cpu_bus (
 		.register_b(readdata2), .immediate(instr15_0), .ALUSrcB(ALUSrcB), 
 		.ALUB(ALUB), .opcode(Decodemux2to1[31:26])
 	);
-
 	//IR
 	instruction_reg IR(
 		.clk(clk), .reset(reset), .IRWrite(IRWrite), .memdata(readdata_to_CPU),
@@ -177,9 +177,10 @@ module mips_cpu_bus (
     	.PC_out(pc_in)
 	);
 	
-	endian_swap swap(
-    		.writedata_from_CPU(writedata_from_CPU), .readdata_from_RAM(readdata), 
-    		.writedata_to_RAM(writedata), .readdata_to_CPU(readdata_to_CPU)
+	endian_swap swap( // opcode input might not be used
+    		.writedata_from_CPU(writedata_from_CPU), .readdata_from_RAM(readdata), .opcode(Decodemux2to1[31:26]),
+			.byteenable_from_CPU(byteenable), .writedata_to_RAM(writedata), 
+			.readdata_to_CPU(readdata_to_CPU)
     	);
     
 	
