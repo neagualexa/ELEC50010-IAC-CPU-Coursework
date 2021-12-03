@@ -27,13 +27,12 @@ module pc(
                 pc_branch_address_reg <= pc_prev;
                 branch_reg <= 1; 
             end
-            if(pcctl) begin  
-                if(branch_reg==1 & state==EXECUTE) begin
+            if(branch_reg==1 && state == MEMORY_ACCESS) begin
                     pc_new <= pc_branch_address_reg;
-                end
-                else begin
-                    pc_new <= pc_prev; 
-                end      
+                    branch_reg <= 0;    
+            end
+            if(pcctl) begin  
+                pc_new <= pc_prev;      
             end
             
         end

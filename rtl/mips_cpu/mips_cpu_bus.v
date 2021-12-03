@@ -82,8 +82,8 @@ module mips_cpu_bus (
 
 	CPU_statemachine stm(.reset(reset), .clk(clk), .stall(stall), .state(state));
 
-	assign pc_ctl = (PCWriteCond & zero) | PCWrite;
-	pc pc1(.clk(clk), .reset(reset), .pcctl(pc_ctl), .pc_prev(pc_in), .pc_new(PC),.PCWriteCond(PCWriteCond),.state(state));
+	//assign pc_ctl = (PCWriteCond & zero) | PCWrite; //no longer used -> is done in PC block
+	pc pc1(.clk(clk), .reset(reset), .pcctl(PCWrite), .pc_prev(pc_in), .pc_new(PC),.PCWriteCond(PCWriteCond),.state(state));
 	
 	//Control signals
 	
@@ -152,16 +152,18 @@ module mips_cpu_bus (
 		.instr10_6(instr10_6), .fixed_shift(fixed_shift)
 	);
 
-	/*
+	
 	always @(*) begin
-		//$display("ALU_MULTorDIV_result = %h", ALU_MULTorDIV_result);
-		//$display("ALUA = %b, ALUB = %b", ALUAmux2to1, ALUB);
+	 	//$display("ALU_MULTorDIV_result = %h", ALU_MULTorDIV_result);
+		$display("pc_in = %h, pc_out = %h, state = %b", pc_in, PC, state);
+	 	//$display("ALUA = %h, ALUB = %h", ALUAmux2to1, ALUB);
+		//$display("Write_in_register = %h, RegAddress = %h, RegWrite = %h, state = %b", RegWritemux2to1, Regmux2to1, RegWrite, state);
 		//$display("state = %b, full_instr = %h, readR1 = %h, regA = %h, RegWrite = %h", state, full_instr, readR1, regA, RegWrite);
-		//$display("ALU_result = %h", ALU_result);
-		$display("writedata_from_CPU = %h, writedata = %h", writedata_from_CPU, writedata);
-		$display("readdata_to_CPU = %h, readdata = %h", readdata_to_CPU, readdata);
+	 	//$display("ALU_result = %h", ALU_result);
+	 	//$display("writedata_from_CPU = %h, writedata = %h", writedata_from_CPU, writedata);
+	 	//$display("readdata_to_CPU = %h, readdata = %h", readdata_to_CPU, readdata);
 	end
-	*/
+	
 	
 
 	//HI LO registers
@@ -179,9 +181,9 @@ module mips_cpu_bus (
 	
 	endian_swap swap( // opcode input might not be used
     		.writedata_from_CPU(writedata_from_CPU), .readdata_from_RAM(readdata), .opcode(Decodemux2to1[31:26]),
-			.byteenable_from_CPU(byteenable), .writedata_to_RAM(writedata), 
-			.readdata_to_CPU(readdata_to_CPU)
-    	);
+			.byteenable_from_CPU(byteenable), 
+			.writedata_to_RAM(writedata), .readdata_to_CPU(readdata_to_CPU)
+    );
     
 	
 endmodule : mips_cpu_bus

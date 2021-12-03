@@ -1,7 +1,7 @@
 module alu(
 	input logic[3:0] ALUOperation,
-	input logic[31:0] a,
-	input logic[31:0] b,
+	input logic signed[31:0] a,
+	input logic signed[31:0] b,
 	input logic unsign,
 	input logic fixed_shift,
 	input logic[4:0] instr10_6,
@@ -102,11 +102,14 @@ module alu(
 				default: ALU_result = 0;
 			endcase
 		end
-		//$display("a = %b", a);
-		//$display("b = %b", b);
+		// $display("a = %b", a);
+		// $display("b = %b", b);
+		// $display("shifted_bit = %b", instr10_6);
+		// $display("ALUOperation = %b", ALUOperation);
+		// $display("ALuresult = %b", ALU_result);
 	end
-	always@(*) begin
-    	$display("ALUSrcA = %b, ALUSrcB= %b",a, b);
-    end
+	// always@(*) begin
+    // 	$display("ALUSrcA = %b, ALUSrcB= %b",a, b);
+    // end
 
 endmodule : alu

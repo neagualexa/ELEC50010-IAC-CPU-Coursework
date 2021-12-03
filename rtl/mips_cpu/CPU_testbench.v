@@ -16,12 +16,14 @@ module CPU_testbench (
 	} state_t;
 	
     logic[31:0] writedata_from_CPU, readdata_from_RAM, writedata_to_RAM, readdata_to_CPU;
+    integer counter;
 
     initial begin
         $dumpfile("CPU_testbench.vcd");
         $dumpvars(0, CPU_testbench);
 
         clk = 0;
+        counter = 1;
         
         repeat (TIMEOUT_CYCLES) begin
             #10
@@ -41,6 +43,7 @@ module CPU_testbench (
         @(negedge clk);
         reset = 0;
         //FETCH instr 1
+        $display("------------------- %d --------------------------", counter);
         $display("FETCH         - readdata_to_CPU: %h, ALUOut: %h",readdata_to_CPU, register_v0);
 
         @(negedge clk);
@@ -55,7 +58,8 @@ module CPU_testbench (
         @(negedge clk);
         //WRITE_BACK instr 1
         $display("WRITE_BACK    - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
-        $display("---------------------------------------------");
+        counter = 1+counter;
+        $display("------------------- %d --------------------------", counter);
 
         repeat (TIMEOUT_CYCLES/5) begin
             @(negedge clk);
@@ -73,7 +77,8 @@ module CPU_testbench (
             @(negedge clk);
             //WRITE_BACK instr
             $display("WRITE_BACK    - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
-            $display("---------------------------------------------");
+            counter = 1+counter;
+            $display("-------------------- %d -------------------------", counter);
         end
         
     end

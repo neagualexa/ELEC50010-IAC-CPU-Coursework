@@ -24,9 +24,11 @@ module ram_tiny_CPU (
         
     end
     
+    /*
     always @(*) begin
     	$display("ram: read = %b", read);
     end
+    */
 
     /* Combinatorial read path. */
     logic[31:0] writedata_temp, readdata_temp_shift, readdata_temp;
@@ -36,19 +38,19 @@ module ram_tiny_CPU (
             writedata_temp = writedata;
             if (byteenable != 0) begin
                 if (byteenable[0] == 1) begin
-                   memory[address + 0] <= writedata[7:0];
+                    memory[address + 0] <= writedata_temp[7:0];
                 end
                 if (byteenable[1] == 1) begin
                      writedata_temp = writedata >> 8;
-                    memory[address + 1] <= writedata[7:0];
+                    memory[address + 1] <= writedata_temp[7:0];
                 end
                 if (byteenable[2] == 1) begin
                     writedata_temp = writedata >> 16;
-                    memory[address + 2] = writedata[7:0];
+                    memory[address + 2] = writedata_temp[7:0];
                 end
                 if (byteenable[3] == 1) begin
                     writedata_temp = writedata >> 24;
-                    memory[address + 3] = writedata[7:0];
+                    memory[address + 3] = writedata_temp[7:0];
                 end  
             end
             /*
@@ -70,40 +72,42 @@ module ram_tiny_CPU (
             //memory[address] <= writedata;
         end
         else if(read) begin
-            $display("Im reading, address = %h", address);
+            //$display("Im reading, address = %h", address);
             readdata_temp[31:24] <= memory[address + 3];
             readdata_temp[23:16] <= memory[address + 2];
             readdata_temp[15:8] <= memory[address + 1];
             readdata_temp[7:0] <= memory[address + 0];
         end
     end
+    /*
     always @(*) begin
         $display("readdata_temp = %h", readdata_temp);
     end
+    */
     always@(*) begin
         if (byteenable != 0) begin
             if (byteenable[3] == 1) begin
 
                 readdata [7:0] = readdata_temp[31:24];
-                $display("ram: readdata = %h, byteenable = %b", readdata, byteenable);
+                //$display("ram: readdata = %h, byteenable = %b", readdata, byteenable);
             end
             if (byteenable[2] == 1) begin
                 readdata_temp_shift = readdata;
                 readdata = readdata_temp_shift << 8;
                 readdata [7:0] = readdata_temp[23:16];
-                $display("ram: readdata = %h, byteenable = %b", readdata, byteenable);
+                //$display("ram: readdata = %h, byteenable = %b", readdata, byteenable);
             end
             if (byteenable[1] == 1) begin
                 readdata_temp_shift = readdata;
                 readdata = readdata_temp_shift << 8;
                 readdata[7:0] = readdata_temp[15:8];
-                $display("ram: readdata = %h, byteenable = %b", readdata, byteenable);
+                //$display("ram: readdata = %h, byteenable = %b", readdata, byteenable);
             end
             if (byteenable[0] == 1) begin
                 readdata_temp_shift = readdata;
                 readdata = readdata_temp_shift << 8;
                 readdata [7:0] = readdata_temp[7:0];
-                $display("ram: readdata = %h, byteenable = %b", readdata, byteenable);
+                //$display("ram: readdata = %h, byteenable = %b", readdata, byteenable);
             end 
         end
     end
@@ -133,10 +137,7 @@ module ram_tiny_CPU (
             // byteenable = 0010; // 
             // byteenable = 0100; // 
             // byteenable = 1000; //
-            
-
-
-    
+                
 endmodule
     
 /* EF 00 00 00 / 00 00 00 EF

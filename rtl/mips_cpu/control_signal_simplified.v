@@ -72,6 +72,8 @@ module control_signal_simplified (
 		SRL		= 6'b000010,
 		SRLV	= 6'b000110,
 
+		//Jump
+		JR 		= 6'b001000,
 		JALR	= 6'b001001
 	} func_code_list;
 
@@ -95,9 +97,7 @@ module control_signal_simplified (
 		LWR		= 6'b100110,
 		SB      = 6'b101000,
 		SH		= 6'b101001,
-		SW 		= 6'b101011,
-		//Jumps
-		JR 		= 6'b001000
+		SW 		= 6'b101011
 	} opcode_list;
 
 	//assign final_code = (opcode==0) ? func_code : opcode;
@@ -116,7 +116,7 @@ module control_signal_simplified (
 		ALUSrcA = 1;
 		ALUSrcB = 0;
 		ALUctl = 0;
-		PCSource = 0;
+		//PCSource = 0;
 		PCWrite = 0;
 		PCWriteCond = 0;
 		IorD = 0;
@@ -126,7 +126,7 @@ module control_signal_simplified (
 		MemtoReg = 0;
 		unsign = 0;
 		fixed_shift = 0;
-	// we should set everything to their default values for every instruction fetched ????????????????? make sure
+	// we should set everything to their default values for every instruction fetched 
 		
 
 		if(state==FETCH_INSTR) begin //Two function need to be done in IF 1.instruction_register<=memory(pc) 2.pc+4
@@ -285,6 +285,19 @@ module control_signal_simplified (
 						unsign = 0;
 					end
 
+					//JR (JUMPINGGGGG) ;)
+					JR: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00; //picking 0: register B which should be 0. 0 register 
+						// MUST ASSUME register rs is div by 4 for a good jump 
+						// would make a bus check by ANDing the address from rs with hFFF0 (just cause)
+
+
+						// FOR JUMP AND RELATED INSTRUCTION : BRANCH DELAYED INSTRUCTION EXECUT FIRST
+						
+						ALUctl = ADD;
+					end
+
 					//default: ALUctl = 4'hX;
 				endcase
 			end
@@ -348,26 +361,12 @@ module control_signal_simplified (
 					LB: begin
 						ALUSrcA = 1;
 						ALUSrcB = 2'b10;
-						
+						ALUctl = ADD;
 					end
 
 					LWL: begin
 						ALUSrcA = 1;
 						ALUSrcB = 2'b10;
-						ALUctl = ADD;
-					end
-
-					//JR (JUMPINGGGGG) ;)
-					JR: begin
-						ALUSrcA = 1;
-						ALUSrcB = 2'b00; //picking 0: register B which should be 0. 0 register 
-						// MUST ASSUME register rs is div by 4 for a good jump 
-						// would make a bus check by ANDing the address from rs with hFFF0 (just cause)
-
-
-						// FOR JUMP AND RELATED INSTRUCTION : BRANCH DELAYED INSTRUCTION EXECUT FIRST
-
-						
 						ALUctl = ADD;
 					end
 				endcase
@@ -396,7 +395,13 @@ module control_signal_simplified (
 						RegWrite = 1;
 						RegDst = 1;
 						MemtoReg = 0;
-					end			
+					end		
+
+					JR: begin  
+						PCSource = 1;
+						PCWriteCond = 1;
+					end
+						
 				endcase
 			end
 			else if (opcode == 1) begin
