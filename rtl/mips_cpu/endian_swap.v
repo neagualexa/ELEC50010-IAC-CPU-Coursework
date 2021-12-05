@@ -19,12 +19,23 @@ output logic [31:0] readdata_to_CPU
 );
  
     typedef enum logic[5:0]{
-        LW = 6'b100011,
-        SW = 6'b101011
+        LB		= 6'b100000,
+		LH 		= 6'b100001,
+		LWL		= 6'b100010,
+		LW 		= 6'b100011,
+		LBU		= 6'b100100,
+		LHU		= 6'b100101,
+		LWR		= 6'b100110,
+		SB      = 6'b101000,
+		SH		= 6'b101001,
+		SW 		= 6'b101011
     } opcode_list;
 
+    // can be left like this as for LWL, LWR 
+    //  - the ram interface separates the wanted bytes from the rest of the transmitted word
+    // also don't need to invert byte enable as the ram interface should solve that directly
     
-        
+    //endian_swap doesnt apply to LB and SB
     assign    writedata_to_RAM [7:0] = writedata_from_CPU [31:24];
     assign    writedata_to_RAM [15:8] = writedata_from_CPU [23:16];
     assign    writedata_to_RAM [23:16] = writedata_from_CPU [15:8];

@@ -351,22 +351,21 @@ module control_signal_simplified (
 						ALUctl = ADD;
 					end
 
-					SB: begin
-						ALUSrcA = 1;
-						ALUSrcB = 2'b10;
-						//ALUSrcB = 2'b11;
-						ALUctl = ADD;
-					end
-
-					LB: begin
+					LB, LBU, SB: begin
 						ALUSrcA = 1;
 						ALUSrcB = 2'b10;
 						ALUctl = ADD;
 					end
 
-					LWL: begin
+					LH, LHU, LUI, SH: begin
 						ALUSrcA = 1;
 						ALUSrcB = 2'b10;
+						ALUctl = ADD;
+					end
+
+					LWL, LWR: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b10; //unallined
 						ALUctl = ADD;
 					end
 				endcase
@@ -409,21 +408,18 @@ module control_signal_simplified (
 			end
 			else begin
 				case(opcode)
-					LW: begin //Load data to the MDR
+					LW, LB, LBU, LUI, LH, LHU: begin //Load data to the MDR
 						IorD = 1;
 						MemRead = 1; 
 					end
 
-					LWL: begin //Load data on the left to unaligned word
-						
-					end
-					
-					SB: begin
+					LWL, LWR: begin //Load data on the left/right to unaligned word (MERGE with remaining register bytes)
 						IorD = 1;
-						MemWrite = 1;
+						MemRead = 1;
 					end
 					
-					SW: begin //store data
+					
+					SW, SB, SH: begin //store data
 						IorD = 1;
 						MemWrite = 1;
 					end
@@ -454,7 +450,7 @@ module control_signal_simplified (
 			if (opcode > 1) begin	
 				case(opcode)
 					//R U 1.Loading data to reg or 2.ALUOut to reg
-					LW: begin
+					LW, LH, LHU, LB, LBU, LWL, LWR, LUI: begin
 						RegWrite = 1;
 						RegDst = 0; //depends on the format of the mips
 						MemtoReg = 1; //memory To register
