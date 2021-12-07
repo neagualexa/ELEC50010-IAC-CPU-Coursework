@@ -7,9 +7,10 @@ module ram_tiny_CPU (
     input logic[31:0] writedata,
     output logic[31:0] readdata
 );
-    parameter RAM_INIT_FILE = "./CPU_ram/jump_test_byte.txt";
+    parameter RAM_INIT_FILE = "./CPU_ram/Branch_test.txt";
 
-    reg [7:0] memory [4095 :0];
+//must change the size of memory to e4*10^6
+    reg [7:0] memory [4095:0];
 
     initial begin
         integer i;

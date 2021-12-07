@@ -9,20 +9,20 @@
 // SH
 // SW 
 module endian_swap (
-input logic [31:0] writedata_from_CPU,
-input logic [31:0] readdata_from_RAM,
-input logic [5:0] opcode,
-input logic [3:0] byteenable_from_CPU,
-output logic [31:0] writedata_to_RAM,
-output logic [31:0] readdata_to_CPU
-
+    input logic [31:0] writedata_from_CPU,
+    input logic [31:0] readdata_from_RAM,
+    input logic [5:0] opcode,
+    input logic [3:0] byteenable_from_CPU,
+    output logic [31:0] writedata_to_RAM,
+    output logic [31:0] readdata_to_CPU
 );
  
+ /*
     typedef enum logic[5:0]{
         LW = 6'b100011,
         SW = 6'b101011
     } opcode_list;
-
+*/
     
         
     assign    writedata_to_RAM [7:0] = writedata_from_CPU [31:24];

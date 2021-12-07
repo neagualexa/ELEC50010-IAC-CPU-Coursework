@@ -6,6 +6,7 @@ module HI_LO_Control( // added states & reset
     input logic reset,
     input logic[31:0] regA,
     input logic[63:0] ALU_MULTorDIV_result,
+    output logic[1:0] HI_LO_ALUOut,
     output logic[31:0] HI,
     output logic[31:0] LO
 );
@@ -24,12 +25,15 @@ module HI_LO_Control( // added states & reset
     typedef enum logic[5:0]{
         MTHI	= 6'b010001,
 	    MTLO	= 6'b010011,
+		MFHI    = 6'b010000,
+		MFLO    = 6'b010010,
         MULT	= 6'b011000,
 		MULTU	= 6'b011001,
         DIV     = 6'b011010,
         DIVU    = 6'b011011
     }final_code_list;
-    
+
+    assign HI_LO_ALUOut = (opcode==0)?(func_code==MFHI)?1:(func_code==MFLO)?2:0 :0;
 
     always_ff @(posedge clk) begin
         if(reset) begin
