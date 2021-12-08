@@ -13,7 +13,7 @@ module mips_cpu_bus (
 	output logic[31:0] writedata,
 	output logic[3:0] byteenable,
 	input logic[31:0] readdata
-
+	
 	//output logic[2:0] state
 
 );
@@ -170,6 +170,7 @@ module mips_cpu_bus (
 		//$display("Write_in_register = %h, RegAddress = %h, RegWrite = %h, state = %b", RegWritemux2to1, Regmux2to1, RegWrite, state);
 		//$display("state = %b, full_instr = %h, readR1 = %h, regA = %h, RegWrite = %h", state, full_instr, readR1, regA, RegWrite);
 	 	//$display("ALU_result = %h", ALU_result);
+		 $display("ALUOut = %h, state = %h", ALUOut, state);
 	 	//$display("writedata_from_CPU = %h, writedata = %h", writedata_from_CPU, writedata);
 	 	//$display("readdata_to_CPU = %h, readdata = %h", readdata_to_CPU, readdata);
 		//For HI LO

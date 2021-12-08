@@ -6,14 +6,14 @@ opcode rs    rt    offset //LW r[1] = MEM(rs+offset(32)) result r[1]= 0000000C
 8C020024
 opcode rs    rt    offset //LW r[2] = MEM(rs+offset(36)) result r[2]= 0000000C
 
-000100 00001 00010 00000 00000 000101
-0001 0000 0010 0010 0000 0000 0000 0101
-10220005
+000100 00001 00010 00000 00000 000010
+0001 0000 0010 0010 0000 0000 0000 0010
+10220002 //5 20
 opcode rs rt offset //BEQ compare register then branchEM[20]
 
 00000000
 00000000
-//filler intruction
+//filler intructions 2x
 
 000001 00001 00001 00000 00000 001000
 0000 0100 0010 0001 0000 0000 0000 1000
@@ -22,7 +22,7 @@ REGIMM rs opcode offset //BGEZ
 
 00000000
 00000000
-//filler instruction
+//filler instructions 2x
 
 000001 00001 10001 00000 00000 001011
 0000 0100 0011 0001 0000 0000 0000 1011

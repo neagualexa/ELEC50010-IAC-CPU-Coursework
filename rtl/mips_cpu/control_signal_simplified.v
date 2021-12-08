@@ -470,7 +470,7 @@ module control_signal_simplified (
 						//PC <= rs;
 						ALUSrcA = 1;
 						ALUSrcB = 2'b00;
-						PCSource = 0;
+						PCSource = 1;
 						JUMP  = 1;
 					end
 
@@ -578,8 +578,7 @@ module control_signal_simplified (
 						ALUSrcB = 2'b00;
 						ALUctl = SUBTRACT;
 						PCWriteCond = 1;
-						PCSource = 0;
-						JUMP = 1;
+						PCSource = 1;
 					end
 
 					BNE: begin
@@ -587,7 +586,7 @@ module control_signal_simplified (
 						ALUSrcB = 2'b00;
 						ALUctl = SUBTRACT;
 						PCWriteCond = 1;
-						PCSource = 0;
+						PCSource = 1;
 						branch_equal = 1;
 						
 					end
@@ -597,7 +596,7 @@ module control_signal_simplified (
 						ALUSrcB = 2'b00;
 						ALUctl = SET_LESS_OR_EQUAL_ZERO;
 						PCWriteCond = 1;
-						PCSource = 0;
+						PCSource = 1;
 					end
 
 					BGTZ: begin
@@ -605,7 +604,7 @@ module control_signal_simplified (
 						ALUSrcB = 2'b00;
 						ALUctl = SET_ON_GREATER_THAN_ZERO;
 						PCWriteCond = 1;
-						PCSource = 0;
+						PCSource = 1;
 					end
 					
 				endcase
