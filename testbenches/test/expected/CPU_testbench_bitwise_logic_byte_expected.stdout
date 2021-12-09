@@ -1,0 +1,135 @@
+RAM : INIT : Loading RAM contents from ./INITIALISED_FILE.txt
+WARNING: ./ram_tiny_CPU.v:23: $readmemh: The behaviour for reg[...] mem[N:0]; $readmemh("...", mem); changed in the 1364-2005 standard. To avoid ambiguity, use mem[0:N] or explicit range parameters $readmemh("...", mem, start, stop);. Defaulting to 1364-2005 behavior.
+WARNING: ./ram_tiny_CPU.v:23: $readmemh(./INITIALISED_FILE.txt): Not enough words in the file for the requested range [0:4095].
+VCD info: dumpfile CPU_testbench.vcd opened for output.
+pc_in = xxxxxxxx, pc_out = 00000000, state = 000
+pc_in = 00000004, pc_out = 00000000, state = 000
+-------------------           1 --------------------------
+FETCH         - readdata_to_CPU: xxxxxxxx, ALUOut: 00000000
+pc_in = 00000004, pc_out = 00000004, state = 001
+pc_in = 00000008, pc_out = 00000004, state = 001
+pc_in = 00000004, pc_out = 00000004, state = 001
+DECODE        - readdata_to_CPU: 8c010020, ALUOut: 00000004, opcode: 100011
+pc_in = 00000004, pc_out = 00000004, state = 010
+pc_in = 00000020, pc_out = 00000004, state = 010
+EXECUTE       - readdata_to_CPU: 8c010020, ALUOut: 00000004 opcode: 100011
+pc_in = 00000020, pc_out = 00000004, state = 011
+pc_in = 00000000, pc_out = 00000004, state = 011
+MEMORY_ACCESS - readdata_to_CPU: 8c010020, ALUOut: 00000020 opcode: 100011
+pc_in = 00000000, pc_out = 00000004, state = 100
+WRITE_BACK    - readdata_to_CPU: 00000091, ALUOut: 00000000 opcode: 000000
+-------------------           2 --------------------------
+pc_in = 00000000, pc_out = 00000004, state = 000
+pc_in = 00000008, pc_out = 00000004, state = 000
+FETCH         - readdata_to_CPU: 00000091, ALUOut: 00000000
+pc_in = 00000008, pc_out = 00000008, state = 001
+pc_in = 00000028, pc_out = 00000008, state = 001
+DECODE        - readdata_to_CPU: 8c020024, ALUOut: 00000008 opcode: 100011
+pc_in = 00000028, pc_out = 00000008, state = 010
+pc_in = 0000002c, pc_out = 00000008, state = 010
+pc_in = 00000024, pc_out = 00000008, state = 010
+EXECUTE       - readdata_to_CPU: 8c020024, ALUOut: 00000028 opcode: 100011
+pc_in = 00000024, pc_out = 00000008, state = 011
+pc_in = 00000000, pc_out = 00000008, state = 011
+MEMORY_ACCESS - readdata_to_CPU: 8c020024, ALUOut: 00000024 opcode: 100011
+pc_in = 00000000, pc_out = 00000008, state = 100
+WRITE_BACK    - readdata_to_CPU: 000000a5, ALUOut: 00000000 opcode: 000000
+--------------------           3 -------------------------
+pc_in = 00000000, pc_out = 00000008, state = 000
+pc_in = 0000000c, pc_out = 00000008, state = 000
+FETCH         - readdata_to_CPU: 000000a5, ALUOut: 00000000
+pc_in = 0000000c, pc_out = 0000000c, state = 001
+pc_in = 00000010, pc_out = 0000000c, state = 001
+pc_in = 00000030, pc_out = 0000000c, state = 001
+DECODE        - readdata_to_CPU: 00221824, ALUOut: 0000000c opcode: 000000
+pc_in = 00000030, pc_out = 0000000c, state = 010
+pc_in = 00000081, pc_out = 0000000c, state = 010
+EXECUTE       - readdata_to_CPU: 00221824, ALUOut: 00000030 opcode: 000000
+pc_in = 00000081, pc_out = 0000000c, state = 011
+pc_in = 00000136, pc_out = 0000000c, state = 011
+MEMORY_ACCESS - readdata_to_CPU: 00221824, ALUOut: 00000081 opcode: 000000
+pc_in = 00000136, pc_out = 0000000c, state = 100
+WRITE_BACK    - readdata_to_CPU: 00221824, ALUOut: 00000136 opcode: 000000
+--------------------           4 -------------------------
+pc_in = 00000136, pc_out = 0000000c, state = 000
+pc_in = 00000010, pc_out = 0000000c, state = 000
+FETCH         - readdata_to_CPU: 00221824, ALUOut: 00000136
+pc_in = 00000010, pc_out = 00000010, state = 001
+pc_in = 00001834, pc_out = 00000010, state = 001
+DECODE        - readdata_to_CPU: 00221825, ALUOut: 00000010 opcode: 000000
+pc_in = 00001834, pc_out = 00000010, state = 010
+pc_in = 00001835, pc_out = 00000010, state = 010
+pc_in = 000000b5, pc_out = 00000010, state = 010
+EXECUTE       - readdata_to_CPU: 00221825, ALUOut: 00001834 opcode: 000000
+pc_in = 000000b5, pc_out = 00000010, state = 011
+pc_in = 00000136, pc_out = 00000010, state = 011
+MEMORY_ACCESS - readdata_to_CPU: 00221825, ALUOut: 000000b5 opcode: 000000
+pc_in = 00000136, pc_out = 00000010, state = 100
+WRITE_BACK    - readdata_to_CPU: 00221825, ALUOut: 00000136 opcode: 000000
+--------------------           5 -------------------------
+pc_in = 00000136, pc_out = 00000010, state = 000
+pc_in = 00000014, pc_out = 00000010, state = 000
+FETCH         - readdata_to_CPU: 00221825, ALUOut: 00000136
+pc_in = 00000014, pc_out = 00000014, state = 001
+pc_in = 00000018, pc_out = 00000014, state = 001
+pc_in = 00001839, pc_out = 00000014, state = 001
+DECODE        - readdata_to_CPU: 00221826, ALUOut: 00000014 opcode: 000000
+pc_in = 00001839, pc_out = 00000014, state = 010
+pc_in = 00000034, pc_out = 00000014, state = 010
+EXECUTE       - readdata_to_CPU: 00221826, ALUOut: 00001839 opcode: 000000
+pc_in = 00000034, pc_out = 00000014, state = 011
+pc_in = 00000136, pc_out = 00000014, state = 011
+MEMORY_ACCESS - readdata_to_CPU: 00221826, ALUOut: 00000034 opcode: 000000
+pc_in = 00000136, pc_out = 00000014, state = 100
+WRITE_BACK    - readdata_to_CPU: 00221826, ALUOut: 00000136 opcode: 000000
+--------------------           6 -------------------------
+pc_in = 00000136, pc_out = 00000014, state = 000
+pc_in = 00000018, pc_out = 00000014, state = 000
+FETCH         - readdata_to_CPU: 00221826, ALUOut: 00000136
+pc_in = 00000018, pc_out = 00000018, state = 001
+pc_in = 0000183e, pc_out = 00000018, state = 001
+DECODE        - readdata_to_CPU: 302300a5, ALUOut: 00000018 opcode: 001100
+pc_in = 0000183e, pc_out = 00000018, state = 010
+pc_in = 00000000, pc_out = 00000018, state = 010
+pc_in = 00000081, pc_out = 00000018, state = 010
+EXECUTE       - readdata_to_CPU: 302300a5, ALUOut: 0000183e opcode: 001100
+pc_in = 00000081, pc_out = 00000018, state = 011
+pc_in = 000000c5, pc_out = 00000018, state = 011
+MEMORY_ACCESS - readdata_to_CPU: 302300a5, ALUOut: 00000081 opcode: 001100
+pc_in = 000000c5, pc_out = 00000018, state = 100
+pc_in = 00000112, pc_out = 00000018, state = 100
+WRITE_BACK    - readdata_to_CPU: 302300a5, ALUOut: 000000c5 opcode: 001100
+--------------------           7 -------------------------
+pc_in = 00000112, pc_out = 00000018, state = 000
+pc_in = 0000001c, pc_out = 00000018, state = 000
+FETCH         - readdata_to_CPU: 302300a5, ALUOut: 00000112
+pc_in = 0000001c, pc_out = 0000001c, state = 001
+pc_in = 00000020, pc_out = 0000001c, state = 001
+pc_in = 000000c1, pc_out = 0000001c, state = 001
+DECODE        - readdata_to_CPU: 342300a5, ALUOut: 0000001c opcode: 001101
+pc_in = 000000c1, pc_out = 0000001c, state = 010
+pc_in = 000000b5, pc_out = 0000001c, state = 010
+EXECUTE       - readdata_to_CPU: 342300a5, ALUOut: 000000c1 opcode: 001101
+pc_in = 000000b5, pc_out = 0000001c, state = 011
+pc_in = 00000112, pc_out = 0000001c, state = 011
+MEMORY_ACCESS - readdata_to_CPU: 342300a5, ALUOut: 000000b5 opcode: 001101
+pc_in = 00000112, pc_out = 0000001c, state = 100
+pc_in = 00000146, pc_out = 0000001c, state = 100
+WRITE_BACK    - readdata_to_CPU: 342300a5, ALUOut: 00000112 opcode: 001101
+--------------------           8 -------------------------
+pc_in = 00000146, pc_out = 0000001c, state = 000
+pc_in = 00000020, pc_out = 0000001c, state = 000
+FETCH         - readdata_to_CPU: 342300a5, ALUOut: 00000146
+pc_in = 00000020, pc_out = 00000020, state = 001
+pc_in = 000000c5, pc_out = 00000020, state = 001
+DECODE        - readdata_to_CPU: 382300a5, ALUOut: 00000020 opcode: 001110
+pc_in = 000000c5, pc_out = 00000020, state = 010
+pc_in = 00000034, pc_out = 00000020, state = 010
+EXECUTE       - readdata_to_CPU: 382300a5, ALUOut: 000000c5 opcode: 001110
+pc_in = 00000034, pc_out = 00000020, state = 011
+pc_in = 00000146, pc_out = 00000020, state = 011
+MEMORY_ACCESS - readdata_to_CPU: 382300a5, ALUOut: 00000034 opcode: 001110
+pc_in = 00000146, pc_out = 00000020, state = 100
+pc_in = 000000c5, pc_out = 00000020, state = 100
+WRITE_BACK    - readdata_to_CPU: 382300a5, ALUOut: 00000146 opcode: 001110
+--------------------           9 -------------------------

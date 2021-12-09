@@ -27,4 +27,4 @@ opcode   rs   rt  //div rs(r1) / rt(r2) remainder is stored in HI and the answer
 0062001B
 opcode   rs   rt  //divu rs(r3) / rt(r2) = 00001000 00000001
 
-
+if (data[31]== 1), data + 64'hFFFFFFFFF000000000

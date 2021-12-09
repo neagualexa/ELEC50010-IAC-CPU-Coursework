@@ -21,10 +21,10 @@ module ALUmux4to1 (
         end
         else begin
             if (immediate [15] == 1) begin
-                sign_extended = 32'hFF00 + immediate;
+                sign_extended = 32'hFFFF0000 + immediate;
             end
             else begin
-                sign_extended = 32'h0000 + immediate;
+                sign_extended = 32'h00000000 + immediate;
             end
         end
         
@@ -35,7 +35,7 @@ module ALUmux4to1 (
     //mux
         case(ALUSrcB)
             0: ALUB = register_b;
-            1: ALUB = 32'h0004;
+            1: ALUB = 32'h00000004;
             2: ALUB = sign_extended;
             3: ALUB = shift_2; 
         endcase 

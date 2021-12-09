@@ -2,7 +2,9 @@
 module control_signal_simplified (
 	input logic[5:0] opcode,
 	input logic[5:0] func_code,
+	input logic [4:0] rt_code,
 	input logic[2:0] state,
+	output logic JUMP,
 	output logic RegDst,
 	output logic RegWrite,
 	output logic ALUSrcA,
@@ -18,26 +20,29 @@ module control_signal_simplified (
 	output logic IRWrite,
 	output logic unsign,
 	output logic fixed_shift,
-	output logic[3:0] byteenable // added a new output byteenable 11/28 (would be use in memory access state)
+	output logic branch_equal,
+	output logic[3:0] byteenable, // added a new output byteenable 11/28 (would be use in memory access state)
+	output logic PC_RETURN_ADDR
 );
 
 	//logic[5:0] final_code;
 
 	typedef enum logic[3:0] {
-        ADD 					= 4'b0000,
-        LOGICAL_AND 			= 4'b0001,
-        SUBTRACT 				= 4'b0010,
-        SET_GREATER_OR_EQUAL	= 4'b0011,
-		SET_ON_GREATER_THAN 	= 4'b0100,
-		SET_LESS_OR_EQUAL 		= 4'b0101,
-        SET_ON_LESS_THAN 		= 4'b0110,
-		MULTIPLY 				= 4'b0111,
-		DIVIDE 					= 4'b1000,
-        LOGICAL_OR 				= 4'b1001,
-		LOGICAL_XOR 			= 4'b1010,
-		SHIFT_LEFT 				= 4'b1011,
-		SHIFT_RIGHT 			= 4'b1100,
-		SHIFT_RIGHT_SIGNED 		= 4'b1101
+        ADD 						= 4'b0000,
+        LOGICAL_AND 				= 4'b0001,
+        SUBTRACT 					= 4'b0010,
+        SET_GREATER_OR_EQUAL_ZERO	= 4'b0011,
+		SET_ON_GREATER_THAN_ZERO	= 4'b0100,
+		SET_LESS_OR_EQUAL_ZERO 		= 4'b0101,
+        SET_ON_LESS_THAN_ZERO 		= 4'b0110,
+		MULTIPLY 					= 4'b0111,
+		DIVIDE 						= 4'b1000,
+        LOGICAL_OR 					= 4'b1001,
+		LOGICAL_XOR 				= 4'b1010,
+		SHIFT_LEFT 					= 4'b1011,
+		SHIFT_RIGHT 				= 4'b1100,
+		SHIFT_RIGHT_SIGNED 			= 4'b1101,
+		SET_ON_LESS_THAN			= 4'b1110
 	} ALUOperation_t;
 
 	typedef enum logic[2:0]{
@@ -62,6 +67,8 @@ module control_signal_simplified (
 
 		MTHI	= 6'b010001,
 		MTLO	= 6'b010011,
+		MFHI    = 6'b010000,
+		MFLO    = 6'b010010,
 
 		SLL		= 6'b000000,
 		SLLV	= 6'b000100,
@@ -97,8 +104,24 @@ module control_signal_simplified (
 		LWR		= 6'b100110,
 		SB      = 6'b101000,
 		SH		= 6'b101001,
-		SW 		= 6'b101011
+		SW 		= 6'b101011,
+
+		//J-type
+		J 		= 6'b000010,
+		JAL		= 6'b000011,
+		BEQ 	= 6'b000100,
+		BNE 	= 6'b000101,	
+		BLEZ 	= 6'b000110,
+		BGTZ	= 6'b000111
 	} opcode_list;
+
+	typedef enum logic[4:0] {
+		//REGIMM opcode = 1
+		BLTZ 	= 5'b00000,
+		BGEZ	= 5'b00001,
+		BLTZAL	= 5'b10000,
+		BGEZAL	= 5'b10001
+	}	rt_code_list;
 
 	//assign final_code = (opcode==0) ? func_code : opcode;
 	//assign final_code = (opcode==1) ? rt[4:0] : opcode; //BLTZ, BGEZ, BLTZAL, BGEZAL
@@ -119,6 +142,7 @@ module control_signal_simplified (
 		//PCSource = 0;
 		PCWrite = 0;
 		PCWriteCond = 0;
+		JUMP = 0;
 		IorD = 0;
 		IRWrite = 0;
 		MemRead = 0;
@@ -126,6 +150,9 @@ module control_signal_simplified (
 		MemtoReg = 0;
 		unsign = 0;
 		fixed_shift = 0;
+		branch_equal = 0;
+		byteenable = 4'b1111;
+	
 	// we should set everything to their default values for every instruction fetched 
 		
 
@@ -288,17 +315,33 @@ module control_signal_simplified (
 					//JR (JUMPINGGGGG) ;)
 					JR: begin
 						ALUSrcA = 1;
-						ALUSrcB = 2'b00; //picking 0: register B which should be 0. 0 register 
+						ALUSrcB = 2'b00; //picking 0: register B which should be 0. 0 register
+						ALUctl = ADD; 
 						// MUST ASSUME register rs is div by 4 for a good jump 
 						// would make a bus check by ANDing the address from rs with hFFF0 (just cause)
 
+						// FOR JUMP AND RELATED INSTRUCTION : BRANCH DELAYED INSTRUCTION EXECUT FIRST	 
+					end
 
-						// FOR JUMP AND RELATED INSTRUCTION : BRANCH DELAYED INSTRUCTION EXECUT FIRST
-						
+					JALR: begin
+						//ALUout <= PC + 4; (which is PC+8? since already added 4 in fetch state
+						ALUSrcA = 0;
+						ALUSrcB = 2'b01;
 						ALUctl = ADD;
 					end
 
 					//default: ALUctl = 4'hX;
+				endcase
+			end
+			else if (opcode == 1) begin
+				//REGIMM
+				case(rt_code)
+					BGEZ, BLTZ, BGEZAL, BLTZAL: begin
+						//ALUOut <= PC+offset(shift2 and sign extended)
+						ALUSrcA = 0;
+						ALUSrcB = 2'b11;
+						ALUctl = ADD;
+					end
 				endcase
 			end
 			else if (opcode > 1) begin
@@ -351,23 +394,46 @@ module control_signal_simplified (
 						ALUctl = ADD;
 					end
 
-					LB, LBU, SB: begin
+					SB: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b10;
+						//ALUSrcB = 2'b11;
+						ALUctl = ADD;
+					end
+
+					LB: begin
 						ALUSrcA = 1;
 						ALUSrcB = 2'b10;
 						ALUctl = ADD;
 					end
 
-					LH, LHU, LUI, SH: begin
+					LWL: begin
 						ALUSrcA = 1;
 						ALUSrcB = 2'b10;
 						ALUctl = ADD;
 					end
+					//JUMP
+					// J: begin
+					// 	PCSource = 2;
+					// 	JUMP = 1;
+					// end
 
-					LWL, LWR: begin
-						ALUSrcA = 1;
-						ALUSrcB = 2'b10; //unallined
+					JAL: begin 
+						//r[31] <= PC + 4 + 4;
+						ALUSrcA = 0;
+						ALUSrcB = 2'b01;
 						ALUctl = ADD;
+
 					end
+					//Conditional Branch
+					BEQ, BNE, BLEZ, BGTZ: begin
+						//Calculate the address first
+						ALUSrcA = 0;
+						ALUSrcB = 2'b11;
+						ALUctl = ADD;
+						//address is then load to ALUOut in mem-access where we could reuse ALU for condition
+					end
+
 				endcase
 			end 
 		end
@@ -396,30 +462,80 @@ module control_signal_simplified (
 						MemtoReg = 0;
 					end		
 
-					JR: begin  
+					//JUMP_Instruction	
+					JALR: begin
+						//rd <= ALUOut; 
+						RegWrite = 1;
+						RegDst = 1;
+						MemtoReg = 0;
+						//PC <= rs;
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
 						PCSource = 1;
-						PCWriteCond = 1;
+						JUMP  = 1;
 					end
-						
+
+					JR: begin
+						PCSource = 1;
+						JUMP = 1;
+					end
+
 				endcase
-			end
+			end	
 			else if (opcode == 1) begin
-			//JUMP
+				//REGIMM
+				case(rt_code)
+					BGEZ: begin
+						ALUSrcA = 1;
+						ALUctl = SET_GREATER_OR_EQUAL_ZERO;
+						PCSource = 1;
+					end
+
+					BLTZ: begin
+						ALUSrcA = 1;
+						ALUctl = SET_ON_LESS_THAN_ZERO;
+						PCSource = 1;
+					end
+
+					BGEZAL: begin
+						ALUSrcA = 1;
+						ALUctl = SET_GREATER_OR_EQUAL_ZERO;
+						PCSource = 1;
+						//PC+8
+						PC_RETURN_ADDR = 1;
+					end
+
+					BLTZAL: begin
+						ALUSrcA = 1;
+						ALUctl = SET_ON_LESS_THAN_ZERO;
+						PCSource = 1;
+						//PC+8
+						PC_RETURN_ADDR = 1;
+					end
+				endcase
 			end
 			else begin
 				case(opcode)
-					LW, LB, LBU, LUI, LH, LHU: begin //Load data to the MDR
+					LW: begin //Load data to the MDR
 						IorD = 1;
 						MemRead = 1; 
 					end
 
-					LWL, LWR: begin //Load data on the left/right to unaligned word (MERGE with remaining register bytes)
+					LWL: begin //Load data on the left to unaligned word
+						
+					end
+					
+					SB: begin
+						IorD = 1;
+						MemWrite = 1;
+					end
+
+					LB: begin 
 						IorD = 1;
 						MemRead = 1;
 					end
 					
-					
-					SW, SB, SH: begin //store data
+					SW: begin //store data
 						IorD = 1;
 						MemWrite = 1;
 					end
@@ -441,7 +557,57 @@ module control_signal_simplified (
 						RegDst = 0;
 						MemtoReg = 0;
 					end
-		
+
+					//JUMP
+					JAL: begin
+						RegWrite = 1;
+						RegDst = 0;
+						MemtoReg = 0;
+						//jump
+						PCSource = 2;
+						JUMP = 1;
+					end
+					
+					J: begin
+						PCSource = 2;
+						JUMP = 1;
+					end
+					
+					//Conditional Branch
+					BEQ: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
+						ALUctl = SUBTRACT;
+						PCWriteCond = 1;
+						PCSource = 1;
+					end
+
+					BNE: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
+						ALUctl = SUBTRACT;
+						PCWriteCond = 1;
+						PCSource = 1;
+						branch_equal = 1;
+						
+					end
+
+					BLEZ: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
+						ALUctl = SET_LESS_OR_EQUAL_ZERO;
+						PCWriteCond = 1;
+						PCSource = 1;
+					end
+
+					BGTZ: begin
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
+						ALUctl = SET_ON_GREATER_THAN_ZERO;
+						PCWriteCond = 1;
+						PCSource = 1;
+					end
+					
 				endcase
 			end
 			
@@ -450,13 +616,21 @@ module control_signal_simplified (
 			if (opcode > 1) begin	
 				case(opcode)
 					//R U 1.Loading data to reg or 2.ALUOut to reg
-					LW, LH, LHU, LB, LBU, LWL, LWR, LUI: begin
+					LW: begin
 						RegWrite = 1;
 						RegDst = 0; //depends on the format of the mips
 						MemtoReg = 1; //memory To register
 					end
+
+					LB: begin
+						RegWrite = 1;
+						RegDst = 0;
+						MemtoReg = 1;
+					end
+					
 				endcase
 			end
+
 		end
 	end
 endmodule : control_signal_simplified
