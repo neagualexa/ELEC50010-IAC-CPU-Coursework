@@ -15,7 +15,7 @@ module CPU_testbench (
 
     logic[31:0] register_v0;
     
-    parameter TIMEOUT_CYCLES = 10000;
+    parameter TIMEOUT_CYCLES = 100;
     parameter TEST_ID = "XXX_X";
     parameter INSTRUCTION = "XXX";
     parameter RAM_INIT_FILE = "";
