@@ -15,7 +15,7 @@ module CPU_testbench (
 
     logic[31:0] register_v0;
     
-    parameter TIMEOUT_CYCLES = 100;
+    parameter TIMEOUT_CYCLES = 10000;
     parameter TEST_ID = "XXX_X";
     parameter INSTRUCTION = "XXX";
     parameter RAM_INIT_FILE = "";
@@ -95,7 +95,7 @@ module CPU_testbench (
             @(negedge clk);
             //WRITE_BACK instr
             $display(" OUT:  WRITE_BACK    - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
-            $display(" RESULT: Instruction %d has result($v0) : %h, active = %d", counter, register_v0, active);
+            //$display(" RESULT: Instruction %d has result($v0) : %h, active = %d", counter, register_v0, active);
             counter = 1+counter;            
         end
 
