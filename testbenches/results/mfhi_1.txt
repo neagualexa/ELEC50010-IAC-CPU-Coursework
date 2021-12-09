@@ -1,0 +1,1 @@
+assert v0 = -59 (0xffffffc5)
