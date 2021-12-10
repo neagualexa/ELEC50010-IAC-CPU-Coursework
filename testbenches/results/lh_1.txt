@@ -1,0 +1,1 @@
+assert v0 = 0xffffc8ba
