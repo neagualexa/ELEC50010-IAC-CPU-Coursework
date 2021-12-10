@@ -30,7 +30,15 @@ module data_selection_endian_conversion (
   assign address = (IorD == 0) ? PC : {ALUOut[31:2],2'b00}; //MEMmux2to1
 
   always @(*) begin
-    case(opcode)
+    if(IorD == 0) begin
+      byteenable = 4'b1111;
+      readdata_processed[7:0] = readdata_non_processed[31:24];
+      readdata_processed[15:8] = readdata_non_processed[23:16];
+      readdata_processed[23:16] = readdata_non_processed[15:8];
+      readdata_processed[31:24] = readdata_non_processed[7:0];
+    end
+    else begin
+      case(opcode)
     LW,SW: begin
       byteenable = 1111;
       writedata_processed[7:0] = writedata_non_processed[31:24];
@@ -106,7 +114,7 @@ module data_selection_endian_conversion (
         byteenable = 4'b0011;
         //readdata_processed[7:0] = readdata_non_processed[15:8];
         //readdata_processed[15:8] = readdata_non_processed[7:0];
-        readdata_processed = {16'b0,readdata_non_processed[7:0],readdata_non_processed[15:8]};//hopfully it perform sign extend
+        readdata_processed = {16'b0,readdata_non_processed[7:0],readdata_non_processed[15:8]};
       end
       else if(ALUOut[1:0]==2'b10) begin
         byteenable = 4'b1100;
@@ -176,6 +184,7 @@ module data_selection_endian_conversion (
       end
     end
     endcase  
+    end
   end
 
 endmodule

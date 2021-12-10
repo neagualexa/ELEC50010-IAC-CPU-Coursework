@@ -166,14 +166,14 @@ module mips_cpu_bus (
 	
 	always @(*) begin
 	 	//$display("ALU_MULTorDIV_result = %h", ALU_MULTorDIV_result);
-		$display("pc_in = %h, pc_out = %h, pcctl = %b, state = %b", pc_in, PC, PCWrite,state);
-	 	$display("ALUA = %h, ALUB = %h ,ALU_MULTorDIV_result = %h", ALUAmux2to1, ALUB, ALU_MULTorDIV_result);
+		//$display("pc_in = %h, pc_out = %h, pcctl = %b, state = %b", pc_in, PC, PCWrite,state);
+	 	//$display("ALUA = %h, ALUB = %h ,ALU_MULTorDIV_result = %h", ALUAmux2to1, ALUB, ALU_MULTorDIV_result);
 		//$display("Write_in_register = %h, RegAddress = %h, RegWrite = %h, state = %b", RegWritemux2to1, Regmux2to1, RegWrite, state);
 		//$display("state = %b, full_instr = %h, readR1 = %h, regA = %h, RegWrite = %h", state, full_instr, readR1, regA, RegWrite);
 	 	//$display("ALU_result = %h", ALU_result);
 		$display("ALUOut = %h, state = %h", ALUOut, state);
 	 	//$display("writedata_from_CPU = %h, writedata = %h", writedata_from_CPU, writedata);
-	 	//$display("readdata_to_CPU = %h, readdata = %h", readdata_to_CPU, readdata);
+	 	$display("readdata_to_CPU = %h, readdata = %h, address = %h, byteenable = %b", readdata_to_CPU, readdata, address, byteenable);
 		//For HI LO
 		//$display("HI = %h, LO = %h, ALU_HI_LO_MUX = %d", HI, LO, );
 		$display("DatatoReg = %h, RegDst = %h, HI_LO_ALUOut = %h, RegWrite = %d", RegWritemux2to1, Regmux2to1, HI_LO_ALUOut, RegWrite);
