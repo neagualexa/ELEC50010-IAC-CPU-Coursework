@@ -40,7 +40,7 @@ module data_selection_endian_conversion (
     else begin
       case(opcode)
     LW,SW: begin
-      byteenable = 1111;
+      byteenable = 4'b1111;
       writedata_processed[7:0] = writedata_non_processed[31:24];
       writedata_processed[15:8] = writedata_non_processed[23:16];
       writedata_processed[23:16] = writedata_non_processed[15:8];

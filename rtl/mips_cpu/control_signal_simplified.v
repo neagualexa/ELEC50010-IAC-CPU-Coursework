@@ -494,18 +494,21 @@ module control_signal_simplified (
 						ALUSrcA = 1;
 						ALUctl = SET_GREATER_OR_EQUAL_ZERO;
 						PCSource = 1;
+						PCWriteCond = 1;
 					end
 
 					BLTZ: begin
 						ALUSrcA = 1;
 						ALUctl = SET_ON_LESS_THAN_ZERO;
 						PCSource = 1;
+						PCWriteCond = 1;
 					end
 
 					BGEZAL: begin
 						ALUSrcA = 1;
 						ALUctl = SET_GREATER_OR_EQUAL_ZERO;
 						PCSource = 1;
+						PCWriteCond = 1;
 						//PC+8
 						PC_RETURN_ADDR = 1;
 					end
@@ -514,6 +517,7 @@ module control_signal_simplified (
 						ALUSrcA = 1;
 						ALUctl = SET_ON_LESS_THAN_ZERO;
 						PCSource = 1;
+						PCWriteCond = 1;
 						//PC+8
 						PC_RETURN_ADDR = 1;
 					end
