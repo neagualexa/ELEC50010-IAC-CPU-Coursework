@@ -60,10 +60,10 @@ module ram_tiny_CPU (
     logic[7:0] writedata_3, writedata_2, writedata_1, writedata_0;
 
 
-    assign writedata_3 = (byteenable[3]) ? writedata[7:0] : readdata_temp[31:24];
-    assign writedata_2 = (byteenable[2]) ? writedata[15:8] : readdata_temp[23:16];
-    assign writedata_1 = (byteenable[1]) ? writedata[23:16] : readdata_temp[15:8];
-    assign writedata_0 = (byteenable[0]) ? writedata[31:24] : readdata_temp[7:0];
+    assign writedata_3 = (byteenable[3] == 1) ? writedata[7:0] : readdata_temp[31:24];
+    assign writedata_2 = (byteenable[2] == 1) ? writedata[15:8] : readdata_temp[23:16];
+    assign writedata_1 = (byteenable[1] == 1) ? writedata[23:16] : readdata_temp[15:8];
+    assign writedata_0 = (byteenable[0] == 1) ? writedata[31:24] : readdata_temp[7:0];
 
 
 
@@ -79,7 +79,7 @@ module ram_tiny_CPU (
         end
         else if (write) begin
 
-            memory[word_address] <= {writedata_3, writedata_2, writedata_1, writedata_0};
+            data[word_address] <= {writedata_3, writedata_2, writedata_1, writedata_0};
         end
         else if(read) begin
             //$display("Im reading, address = %h", address);

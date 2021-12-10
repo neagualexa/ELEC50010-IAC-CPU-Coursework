@@ -526,7 +526,7 @@ module control_signal_simplified (
 			else begin
 				case(opcode)
 					LUI: begin
-						RegWrite = 0;
+						RegWrite = 1;
 						RegDst = 0;
 						MemtoReg = 0;
 					end
@@ -615,18 +615,19 @@ module control_signal_simplified (
 			if (opcode > 1) begin	
 				case(opcode)
 					//R U 1.Loading data to reg or 2.ALUOut to reg
-					LW: begin
+					LW,LWL,LWR,LB,LBU,LH,LHU: begin
 						RegWrite = 1;
 						RegDst = 0; //depends on the format of the mips
 						MemtoReg = 1; //memory To register
 					end
-
+					
+					/*
 					LB: begin
 						RegWrite = 1;
 						RegDst = 0;
 						MemtoReg = 1;
 					end
-					
+					*/
 				endcase
 			end
 

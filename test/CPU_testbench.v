@@ -42,7 +42,7 @@ module CPU_testbench (
             clk = ~clk;
         end       
 
-        $fatal(2, "did not finish within %d cycles", TIMEOUT_CYCLES); 
+        $error(2, "did not finish within %d cycles", TIMEOUT_CYCLES); 
     end
 
     initial begin
