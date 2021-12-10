@@ -95,7 +95,7 @@ module CPU_testbench (
             @(negedge clk);
             //WRITE_BACK instr
             $display(" OUT:  WRITE_BACK    - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
-            //$display(" RESULT: Instruction %d has result($v0) : %h, active = %d", counter, register_v0, active);
+            $display(" OUT: Instruction %d has result($v0) : %h, active = %d", counter, register_v0, active);
             counter = 1+counter;            
         end
 

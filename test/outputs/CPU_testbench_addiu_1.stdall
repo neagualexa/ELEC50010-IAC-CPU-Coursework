@@ -1,123 +1,210 @@
 RAM : INIT : Loading RAM contents from ./INITIALISED_FILE.txt
-WARNING: ./ram_tiny_CPU.v:29: $readmemh: The behaviour for reg[...] mem[N:0]; $readmemh("...", mem); changed in the 1364-2005 standard. To avoid ambiguity, use mem[0:N] or explicit range parameters $readmemh("...", mem, start, stop);. Defaulting to 1364-2005 behavior.
-WARNING: ./ram_tiny_CPU.v:29: $readmemh(./INITIALISED_FILE.txt): Not enough words in the file for the requested range [0:65535].
+RAM : DATA : Loading DATA contents from ./DATA_MEMORY_FILE.txt
+WARNING: ./ram_tiny_CPU.v:34: $readmemh: The behaviour for reg[...] mem[N:0]; $readmemh("...", mem); changed in the 1364-2005 standard. To avoid ambiguity, use mem[0:N] or explicit range parameters $readmemh("...", mem, start, stop);. Defaulting to 1364-2005 behavior.
+WARNING: ./ram_tiny_CPU.v:34: $readmemh(./DATA_MEMORY_FILE.txt): Not enough words in the file for the requested range [0:65535].
+WARNING: ./ram_tiny_CPU.v:35: $readmemh: The behaviour for reg[...] mem[N:0]; $readmemh("...", mem); changed in the 1364-2005 standard. To avoid ambiguity, use mem[0:N] or explicit range parameters $readmemh("...", mem, start, stop);. Defaulting to 1364-2005 behavior.
+WARNING: ./ram_tiny_CPU.v:35: $readmemh(./INITIALISED_FILE.txt): Not enough words in the file for the requested range [0:65535].
 VCD info: dumpfile CPU_testbench.vcd opened for output.
 ram: read = 0, wordaddress = xxxxxxxx, readdata = xxxxxxxx
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = xxxxxxxx, pc_out = xxxxxxxx, pcctl = 0, state = xxx
+ALUA = xxxxxxxx, ALUB = xxxxxxxx ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
 ALUOut = xxxxxxxx, state = x
-HI = xxxxxxxx, LO = xxxxxxxx
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = xxxxxxxx, pc_out = bfc00000, pcctl = 1, state = 000
+readdata_to_CPU = xxxxxxxx, readdata = xxxxxxxx, address = xxxxxxxx, byteenable = xxxx
+DatatoReg = xxxxxxxx, RegDst = xx, HI_LO_ALUOut = z, RegWrite = 0
+ALUA = xxxxxxxx, ALUB = xxxxxxxx ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
+ALUOut = xxxxxxxx, state = x
+readdata_to_CPU = xxxxxxxx, readdata = xxxxxxxx, address = xxxxxxxx, byteenable = xxxx
+DatatoReg = xxxxxxxx, RegDst = xx, HI_LO_ALUOut = x, RegWrite = 0
+ALUA = xxxxxxxx, ALUB = xxxxxxxx ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
+ALUOut = xxxxxxxx, state = x
+readdata_to_CPU = xxxxxxxx, readdata = xxxxxxxx, address = xxxxxxxx, byteenable = 1111
+DatatoReg = xxxxxxxx, RegDst = xx, HI_LO_ALUOut = x, RegWrite = 0
+ALUA = xxxxxxxx, ALUB = xxxxxxxx ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
 ALUOut = 00000000, state = 0
-HI = 00000000, LO = 00000000
-ram: read = 1, wordaddress = 00000000, readdata = xxxxxxxx
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = bfc00004, pc_out = bfc00000, pcctl = 1, state = 000
+readdata_to_CPU = xxxxxxxx, readdata = xxxxxxxx, address = xxxxxxxx, byteenable = 1111
+DatatoReg = xxxxxxxx, RegDst = xx, HI_LO_ALUOut = x, RegWrite = 0
+ram: read = 1, wordaddress = xxxxxxxx, readdata = xxxxxxxx
+ALUA = bfc00000, ALUB = 00000004 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
 ALUOut = 00000000, state = 0
-HI = 00000000, LO = 00000000
+readdata_to_CPU = xxxxxxxx, readdata = xxxxxxxx, address = bfc00000, byteenable = 1111
+DatatoReg = xxxxxxxx, RegDst = xx, HI_LO_ALUOut = x, RegWrite = 0
 ram: read = 1, wordaddress = 00000000, readdata = xxxxxxxx
+ALUA = bfc00000, ALUB = 00000004 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
+ALUOut = 00000000, state = 0
+readdata_to_CPU = xxxxxxxx, readdata = xxxxxxxx, address = bfc00000, byteenable = 1111
+DatatoReg = xxxxxxxx, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
+ALUA = bfc00000, ALUB = 00000004 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
+ALUOut = 00000000, state = 0
+readdata_to_CPU = xxxxxxxx, readdata = xxxxxxxx, address = bfc00000, byteenable = 1111
+DatatoReg = 00000000, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
  OUT:  -------------------           1 --------------------------
  OUT:  FETCH         - readdata_to_CPU: xxxxxxxx, ALUOut: 00000000, opcode: xxxxxx
 ram: read = 1, wordaddress = 00000000, readdata = 08000000
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = bfc00004, pc_out = bfc00004, pcctl = 1, state = 001
+ALUA = bfc00000, ALUB = 00000004 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
 ALUOut = bfc00004, state = 1
-HI = 00000000, LO = 00000000
+readdata_to_CPU = 00000008, readdata = 08000000, address = bfc00000, byteenable = 1111
+DatatoReg = 00000000, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
+ALUA = bfc00004, ALUB = 00000004 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
+ALUOut = bfc00004, state = 1
+readdata_to_CPU = 00000008, readdata = 08000000, address = bfc00004, byteenable = 1111
+DatatoReg = bfc00004, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
 ram: read = 0, wordaddress = 00000001, readdata = 08000000
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = bfc00004, pc_out = bfc00004, pcctl = 0, state = 001
+ALUA = bfc00004, ALUB = 00000000 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
 ALUOut = bfc00004, state = 1
-HI = 00000000, LO = 00000000
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = bfc00008, pc_out = bfc00004, pcctl = 0, state = 001
-ALUOut = bfc00004, state = 1
-HI = 00000000, LO = 00000000
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = bfc00004, pc_out = bfc00004, pcctl = 0, state = 001
-ALUOut = bfc00004, state = 1
-HI = 00000000, LO = 00000000
+readdata_to_CPU = 00000008, readdata = 08000000, address = bfc00004, byteenable = 1111
+DatatoReg = bfc00004, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
  OUT:  DECODE        - readdata_to_CPU: 00000008, ALUOut: 00000000, opcode: 000000
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = bfc00004, pc_out = bfc00004, pcctl = 0, state = 010
+ALUA = bfc00004, ALUB = 00000000 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
 ALUOut = bfc00004, state = 2
-HI = 00000000, LO = 00000000
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = 00000000, pc_out = bfc00004, pcctl = 0, state = 010
+readdata_to_CPU = 00000008, readdata = 08000000, address = bfc00004, byteenable = 1111
+DatatoReg = bfc00004, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
+ALUA = 00000000, ALUB = 00000000 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
 ALUOut = bfc00004, state = 2
-HI = 00000000, LO = 00000000
+readdata_to_CPU = 00000008, readdata = 08000000, address = bfc00004, byteenable = 1111
+DatatoReg = bfc00004, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
  OUT:  EXECUTE       - readdata_to_CPU: 00000008, ALUOut: 00000000 opcode: 000000
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = 00000000, pc_out = bfc00004, pcctl = 0, state = 011
+ALUA = 00000000, ALUB = 00000000 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
 ALUOut = 00000000, state = 3
-HI = 00000000, LO = 00000000
+readdata_to_CPU = 00000008, readdata = 08000000, address = bfc00004, byteenable = 1111
+DatatoReg = bfc00004, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
+ALUA = 00000000, ALUB = 00000000 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
+ALUOut = 00000000, state = 3
+readdata_to_CPU = 00000008, readdata = 08000000, address = bfc00004, byteenable = 1111
+DatatoReg = 00000000, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
  OUT:  MEMORY_ACCESS - readdata_to_CPU: 00000008, ALUOut: 00000000 opcode: 000000
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = 00000000, pc_out = bfc00004, pcctl = 0, state = 100
+ALUA = 00000000, ALUB = 00000000 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
 ALUOut = 00000000, state = 4
-HI = 00000000, LO = 00000000
+readdata_to_CPU = 00000008, readdata = 08000000, address = bfc00004, byteenable = 1111
+DatatoReg = 00000000, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
  OUT:  WRITE_BACK    - readdata_to_CPU: 00000008, ALUOut: 00000000 opcode: 000000
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = 00000000, pc_out = bfc00004, pcctl = 1, state = 000
+ALUA = 00000000, ALUB = 00000000 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
 ALUOut = 00000000, state = 0
-HI = 00000000, LO = 00000000
+readdata_to_CPU = 00000008, readdata = 08000000, address = bfc00004, byteenable = 1111
+DatatoReg = 00000000, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
 ram: read = 1, wordaddress = 00000001, readdata = 08000000
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = bfc00008, pc_out = bfc00004, pcctl = 1, state = 000
+ALUA = bfc00004, ALUB = 00000004 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
 ALUOut = 00000000, state = 0
-HI = 00000000, LO = 00000000
+readdata_to_CPU = 00000008, readdata = 08000000, address = bfc00004, byteenable = 1111
+DatatoReg = 00000000, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
  OUT:  -------------------           2 --------------------------
  OUT:  FETCH         - readdata_to_CPU: 00000008, ALUOut: 00000000, opcode: 000000
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = bfc00008, pc_out = bfc00008, pcctl = 0, state = 001
+ALUA = bfc00004, ALUB = 00000004 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
 ALUOut = bfc00008, state = 1
-HI = 00000000, LO = 00000000
+readdata_to_CPU = 00000008, readdata = e9020224, address = bfc00004, byteenable = 1111
+DatatoReg = 00000000, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
+ram: read = 0, wordaddress = 00000001, readdata = e9020224
+ALUA = bfc00008, ALUB = 00000008 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
+ALUOut = bfc00008, state = 1
+readdata_to_CPU = 240202e9, readdata = e9020224, address = bfc00008, byteenable = 1111
+DatatoReg = 00000000, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
 ram: read = 0, wordaddress = 00000002, readdata = e9020224
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = bfc00010, pc_out = bfc00008, pcctl = 0, state = 001
+ALUA = bfc00008, ALUB = 00000008 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
 ALUOut = bfc00008, state = 1
-HI = 00000000, LO = 00000000
+readdata_to_CPU = 240202e9, readdata = e9020224, address = bfc00008, byteenable = 1111
+DatatoReg = bfc00008, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
+ALUA = bfc00008, ALUB = 00000008 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
+ALUOut = bfc00008, state = 1
+readdata_to_CPU = 240202e9, readdata = e9020224, address = bfc00008, byteenable = 1111
+DatatoReg = bfc00008, RegDst = 02, HI_LO_ALUOut = 0, RegWrite = 0
  OUT:  DECODE        - readdata_to_CPU: 240202e9, ALUOut: 00000000 opcode: 001001
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = bfc00010, pc_out = bfc00008, pcctl = 0, state = 010
+ALUA = bfc00008, ALUB = 00000008 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
 ALUOut = bfc00010, state = 2
-HI = 00000000, LO = 00000000
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = bfc002f1, pc_out = bfc00008, pcctl = 0, state = 010
+readdata_to_CPU = 240202e9, readdata = e9020224, address = bfc00008, byteenable = 1111
+DatatoReg = bfc00008, RegDst = 02, HI_LO_ALUOut = 0, RegWrite = 0
+ALUA = bfc00008, ALUB = 000002e9 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
 ALUOut = bfc00010, state = 2
-HI = 00000000, LO = 00000000
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = 000002e9, pc_out = bfc00008, pcctl = 0, state = 010
+readdata_to_CPU = 240202e9, readdata = e9020224, address = bfc00008, byteenable = 1111
+DatatoReg = bfc00010, RegDst = 02, HI_LO_ALUOut = 0, RegWrite = 0
+ALUA = 00000000, ALUB = 000002e9 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
 ALUOut = bfc00010, state = 2
-HI = 00000000, LO = 00000000
+readdata_to_CPU = 240202e9, readdata = e9020224, address = bfc00008, byteenable = 1111
+DatatoReg = bfc00010, RegDst = 02, HI_LO_ALUOut = 0, RegWrite = 0
  OUT:  EXECUTE       - readdata_to_CPU: 240202e9, ALUOut: 00000000 opcode: 001001
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = 000002e9, pc_out = bfc00008, pcctl = 0, state = 011
+ALUA = 00000000, ALUB = 000002e9 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
 ALUOut = 000002e9, state = 3
-HI = 00000000, LO = 00000000
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = 00000000, pc_out = bfc00008, pcctl = 0, state = 011
+readdata_to_CPU = 240202e9, readdata = e9020224, address = bfc00008, byteenable = 1111
+DatatoReg = bfc00010, RegDst = 02, HI_LO_ALUOut = 0, RegWrite = 1
+ALUA = 00000000, ALUB = 00000000 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
 ALUOut = 000002e9, state = 3
-HI = 00000000, LO = 00000000
+readdata_to_CPU = 240202e9, readdata = e9020224, address = bfc00008, byteenable = 1111
+DatatoReg = 000002e9, RegDst = 02, HI_LO_ALUOut = 0, RegWrite = 1
  OUT:  MEMORY_ACCESS - readdata_to_CPU: 240202e9, ALUOut: 00000000 opcode: 001001
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = 00000000, pc_out = 00000000, pcctl = 0, state = 100
+ALUA = 00000000, ALUB = 00000000 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
 ALUOut = 00000000, state = 4
-HI = 00000000, LO = 00000000
-ram: read = 0, wordaddress = 10100000, readdata = e9020224
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = 000002e9, pc_out = 00000000, pcctl = 0, state = 100
+readdata_to_CPU = 240202e9, readdata = e9020224, address = bfc00008, byteenable = 1111
+DatatoReg = 000002e9, RegDst = 02, HI_LO_ALUOut = 0, RegWrite = 1
+ALUA = 00000000, ALUB = 000002e9 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
 ALUOut = 00000000, state = 4
-HI = 00000000, LO = 00000000
+readdata_to_CPU = 240202e9, readdata = e9020224, address = 00000000, byteenable = 1111
+DatatoReg = 00000000, RegDst = 02, HI_LO_ALUOut = 0, RegWrite = 0
+ram: read = 0, wordaddress = 00000000, readdata = e9020224
  OUT:  WRITE_BACK    - readdata_to_CPU: 240202e9, ALUOut: 000002e9 opcode: 001001
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = 000002e9, pc_out = 00000000, pcctl = 1, state = 000
+ OUT: Instruction           2 has result($v0) : 000002e9, active = 1
+ALUA = 00000000, ALUB = 000002e9 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
 ALUOut = 000002e9, state = 0
-HI = 00000000, LO = 00000000
-ram: read = 1, wordaddress = 10100000, readdata = e9020224
-ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
-pc_in = 00000004, pc_out = 00000000, pcctl = 1, state = 000
+readdata_to_CPU = 240202e9, readdata = e9020224, address = 00000000, byteenable = 1111
+DatatoReg = 00000000, RegDst = 02, HI_LO_ALUOut = 0, RegWrite = 0
+ram: read = 1, wordaddress = 00000000, readdata = e9020224
+ALUA = 00000000, ALUB = 00000004 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
 ALUOut = 000002e9, state = 0
-HI = 00000000, LO = 00000000
+readdata_to_CPU = 240202e9, readdata = e9020224, address = 00000000, byteenable = 1111
+DatatoReg = 000002e9, RegDst = 02, HI_LO_ALUOut = 0, RegWrite = 0
+ OUT:  -------------------           3 --------------------------
+ OUT:  FETCH         - readdata_to_CPU: 240202e9, ALUOut: 000002e9, opcode: 001001
+ram: read = 1, wordaddress = 00000000, readdata = 00000000
+ALUA = 00000000, ALUB = 00000004 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
+ALUOut = 00000004, state = 1
+readdata_to_CPU = 00000000, readdata = 00000000, address = 00000000, byteenable = 1111
+DatatoReg = 000002e9, RegDst = 02, HI_LO_ALUOut = 0, RegWrite = 0
+ALUA = 00000004, ALUB = 00000004 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
+ALUOut = 00000004, state = 1
+readdata_to_CPU = 00000000, readdata = 00000000, address = 00000004, byteenable = 1111
+DatatoReg = 00000004, RegDst = 02, HI_LO_ALUOut = 0, RegWrite = 0
+ram: read = 0, wordaddress = 00000001, readdata = 00000000
+ALUA = 00000004, ALUB = 000002e9 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
+ALUOut = 00000004, state = 1
+readdata_to_CPU = 00000000, readdata = 00000000, address = 00000004, byteenable = 1111
+DatatoReg = 00000004, RegDst = 02, HI_LO_ALUOut = 0, RegWrite = 0
+ALUA = 00000004, ALUB = 000002e9 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
+ALUOut = 00000004, state = 1
+readdata_to_CPU = 00000000, readdata = 00000000, address = 00000004, byteenable = 1111
+DatatoReg = 00000004, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
+ OUT:  DECODE        - readdata_to_CPU: 00000000, ALUOut: 000002e9 opcode: 000000
+ALUA = 00000004, ALUB = 000002e9 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
+ALUOut = 000002ed, state = 2
+readdata_to_CPU = 00000000, readdata = 00000000, address = 00000004, byteenable = 1111
+DatatoReg = 00000004, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
+ALUA = 00000000, ALUB = 00000000 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
+ALUOut = 000002ed, state = 2
+readdata_to_CPU = 00000000, readdata = 00000000, address = 00000004, byteenable = 1111
+DatatoReg = 00000004, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
+ALUA = 00000000, ALUB = 00000000 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
+ALUOut = 000002ed, state = 2
+readdata_to_CPU = 00000000, readdata = 00000000, address = 00000004, byteenable = 1111
+DatatoReg = 000002ed, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
+ OUT:  EXECUTE       - readdata_to_CPU: 00000000, ALUOut: 000002e9 opcode: 000000
+ALUA = 00000000, ALUB = 00000000 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
+ALUOut = 00000000, state = 3
+readdata_to_CPU = 00000000, readdata = 00000000, address = 00000004, byteenable = 1111
+DatatoReg = 000002ed, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
+ALUA = 00000000, ALUB = 00000000 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
+ALUOut = 00000000, state = 3
+readdata_to_CPU = 00000000, readdata = 00000000, address = 00000004, byteenable = 1111
+DatatoReg = 00000000, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 1
+ OUT:  MEMORY_ACCESS - readdata_to_CPU: 00000000, ALUOut: 000002e9 opcode: 000000
+ALUA = 00000000, ALUB = 00000000 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
+ALUOut = 00000000, state = 4
+readdata_to_CPU = 00000000, readdata = 00000000, address = 00000004, byteenable = 1111
+DatatoReg = 00000000, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
+ OUT:  WRITE_BACK    - readdata_to_CPU: 00000000, ALUOut: 000002e9 opcode: 000000
+ OUT: Instruction           3 has result($v0) : 000002e9, active = 0
+ALUA = 00000000, ALUB = 00000000 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
+ALUOut = 00000000, state = 0
+readdata_to_CPU = 00000000, readdata = 00000000, address = 00000004, byteenable = 1111
+DatatoReg = 00000000, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
+ram: read = 1, wordaddress = 00000001, readdata = 00000000
+ALUA = 00000004, ALUB = 00000004 ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx
+ALUOut = 00000000, state = 0
+readdata_to_CPU = 00000000, readdata = 00000000, address = 00000004, byteenable = 1111
+DatatoReg = 00000000, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0
  RESULT: 000002e9
-./CPU_testbench.v:104: $finish called at 120 (1s)
+./CPU_testbench.v:104: $finish called at 170 (1s)

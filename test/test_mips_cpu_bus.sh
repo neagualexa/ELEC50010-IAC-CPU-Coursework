@@ -16,6 +16,7 @@ if [[ $DIRECTORY == "rtl" && $1 != "help" ]] ; then
 	    #echo "code: $TEST_CODE"
 	    
 	    for i in ${TESTCASES} ; do
+	    	RESULTFAIL=0
 	    	TESTNAME=$(basename ${i} .txt)
 	    	#echo "name: $TESTNAME"
 	    
@@ -57,7 +58,7 @@ if [[ $DIRECTORY == "rtl" && $1 != "help" ]] ; then
 		    if [[ $RESULTFAIL -eq 1 ]] ; then
 			echo "$TESTNAME $INSTRUCTION Fail Compilation"
 		    elif [[ $RESULTFAIL -eq 2 ]] ; then
-			echo "$TESTNAME $INSTRUCTION Fail Execution: Test return wrong value"
+			echo "$TESTNAME $INSTRUCTION Fail Execution: Test return wrong value" $(cat ./outputs/CPU_testbench_${TESTNAME}.stdout) ", should be:" $(cat ./expected/CPU_testbench_${TESTNAME}_expected.stdout)
 		    else 
 			echo "$TESTNAME $INSTRUCTION Pass"
 		    fi
@@ -108,7 +109,7 @@ if [[ $DIRECTORY == "rtl" && $1 != "help" ]] ; then
 		       if [[ $RESULTFAIL -eq 1 ]] ; then
 			echo "$TESTNAME $INSTRUCTION Fail Compilation"
 		       elif [[ $RESULTFAIL -eq 2 ]] ; then
-			echo "$TESTNAME $INSTRUCTION Fail Execution: Test return wrong value"
+			echo "$TESTNAME $INSTRUCTION Fail Execution: Test return wrong value" $(cat ./outputs/CPU_testbench_${TESTNAME}.stdout) ", should be:" $(cat ./expected/CPU_testbench_${TESTNAME}_expected.stdout)
 		       else 
 			echo "$TESTNAME $INSTRUCTION Pass"
 		       fi
