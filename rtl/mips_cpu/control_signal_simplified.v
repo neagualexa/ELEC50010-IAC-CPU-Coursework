@@ -21,7 +21,7 @@ module control_signal_simplified (
 	output logic unsign,
 	output logic fixed_shift,
 	output logic branch_equal,
-	output logic[3:0] byteenable, // added a new output byteenable 11/28 (would be use in memory access state)
+	//output logic[3:0] byteenable, // added a new output byteenable 11/28 (would be use in memory access state)
 	output logic PC_RETURN_ADDR
 );
 
@@ -121,7 +121,7 @@ module control_signal_simplified (
 		BGEZ	= 5'b00001,
 		BLTZAL	= 5'b10000,
 		BGEZAL	= 5'b10001
-	}	rt_code_list;
+	} rt_code_list;
 
 	//assign final_code = (opcode==0) ? func_code : opcode;
 	//assign final_code = (opcode==1) ? rt[4:0] : opcode; //BLTZ, BGEZ, BLTZAL, BGEZAL
@@ -151,7 +151,6 @@ module control_signal_simplified (
 		unsign = 0;
 		fixed_shift = 0;
 		branch_equal = 0;
-		byteenable = 4'b1111;
 	
 	// we should set everything to their default values for every instruction fetched 
 		
@@ -385,30 +384,32 @@ module control_signal_simplified (
 						ALUctl = LOGICAL_XOR;
 					end
 					
+					LUI: begin
+						ALUSrcA = 1; //0 register
+						ALUSrcB = 2'b10; //shifter 16 bit
+						ALUctl = ADD;
+					end
 
 					//LW SW(Memory reference)
-					LW, SW: begin
-						ALUSrcA = 1;
-						ALUSrcB = 2'b10; // shift left 2 is not needed
-						//ALUSrcB = 2'b11; picking 3 with the left-shift unit => so that we an address which is div by 4
-						ALUctl = ADD;
-					end
-
-					SB: begin
+					LW, SW: begin //16-bit sign offset + base register[21:25]
 						ALUSrcA = 1;
 						ALUSrcB = 2'b10;
-						//ALUSrcB = 2'b11;
 						ALUctl = ADD;
 					end
-
-					LB: begin
+					LH,SH,LHU: begin //16-bit sign offset + base register[21:25]
 						ALUSrcA = 1;
 						ALUSrcB = 2'b10;
 						ALUctl = ADD;
 					end
 
-					LWL: begin
+					LB,SB,LBU: begin //16 bit sign offset + base register[21:25]
 						ALUSrcA = 1;
+						ALUSrcB = 2'b10;
+						ALUctl = ADD;
+					end
+
+					LWL,LWR: begin //16 bit sign offset + PC
+						ALUSrcA = 0;
 						ALUSrcB = 2'b10;
 						ALUctl = ADD;
 					end
@@ -479,6 +480,10 @@ module control_signal_simplified (
 						PCSource = 1;
 						JUMP = 1;
 					end
+					MFHI,MFLO: begin
+						RegWrite = 1;
+						RegDst = 1;
+					end
 
 				endcase
 			end	
@@ -516,26 +521,16 @@ module control_signal_simplified (
 			end
 			else begin
 				case(opcode)
-					LW: begin //Load data to the MDR
+					LUI: begin
+						RegWrite = 0;
+						RegDst = 0;
+						MemtoReg = 0;
+					end
+					LW,LWL,LWR,LB,LBU,LH,LHU: begin //Load data to the MDR
 						IorD = 1;
 						MemRead = 1; 
-					end
-
-					LWL: begin //Load data on the left to unaligned word
-						
-					end
-					
-					SB: begin
-						IorD = 1;
-						MemWrite = 1;
-					end
-
-					LB: begin 
-						IorD = 1;
-						MemRead = 1;
-					end
-					
-					SW: begin //store data
+					end			
+					SW,SB,SH: begin
 						IorD = 1;
 						MemWrite = 1;
 					end

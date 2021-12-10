@@ -107,12 +107,15 @@ module mips_cpu_bus (
 	);
 	
 	//MUXes 	xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx this might be wrong  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-	MEMmux MEMmux(.IorD(IorD), .ALUOut(ALUOut), .opcode(Decodemux2to1[31:26]),.byteenable(byteenable), .address(address),.PC(PC));
-	
+	data_selection_endian_conversion data_selection_endian_conversion(
+		.IorD(IorD),.PC(PC),.ALUOut(HI_LO_ALUOut_to_Reg_mux),
+		.opcode(Decodemux2to1[31:26]),.writedata_non_processed(regB),.readdata_non_processed(readdata),
+		.writedata_processed(writedata),.readdata_processed(readdata_to_CPU),.byteenable(byteenable),.address(address)
+	);
 	//assign address = MEMmux2to1;
 	assign Regmux2to1 = (RegDst == 0) ? Decodemux2to1[20:16] : Decodemux2to1[15:11];
 	//          xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx this might not work
-	assign HI_LO_ALUOut_to_Reg_mux = (HI_LO_ALUOut == 0)? ALUOut:(HI_LO_ALUOut == 1)? LO:(HI_LO_ALUOut == 2)? HI:HI_LO_ALUOut_to_Reg_mux;
+	assign HI_LO_ALUOut_to_Reg_mux = (HI_LO_ALUOut == 0)? ALUOut:(HI_LO_ALUOut == 1)? HI:(HI_LO_ALUOut == 2)? LO:HI_LO_ALUOut_to_Reg_mux;
 	assign RegWritemux2to1 = (MemtoReg == 0) ? HI_LO_ALUOut_to_Reg_mux : readdata_to_CPU;
 	assign ALUAmux2to1 = (ALUSrcA == 0) ? PC : regA; 
 
@@ -136,7 +139,7 @@ module mips_cpu_bus (
 		.clk(clk), .reset(reset), .RegWrite(RegWrite), .readR1(readR1), 
 		.readR2(readR2), .writeR(Regmux2to1), .writedata(RegWritemux2to1),
 		.readdata1(readdata1), .readdata2(readdata2) , .instr(Decodemux2to1), 
-		.byteenable(byteenable), .register_v0(register_v0), .state(state)
+		.register_v0(register_v0), .state(state)
 		);
 	
 	//registers A & B & ALUOut
@@ -162,18 +165,18 @@ module mips_cpu_bus (
 
 	
 	always @(*) begin
-	 	$display("ALU_MULTorDIV_result = %h", ALU_MULTorDIV_result);
+	 	//$display("ALU_MULTorDIV_result = %h", ALU_MULTorDIV_result);
 		$display("pc_in = %h, pc_out = %h, pcctl = %b, state = %b", pc_in, PC, PCWrite,state);
-	 	//$display("ALUA = %h, ALUB = %h", ALUAmux2to1, ALUB);
+	 	$display("ALUA = %h, ALUB = %h ,ALU_MULTorDIV_result = %h", ALUAmux2to1, ALUB, ALU_MULTorDIV_result);
 		//$display("Write_in_register = %h, RegAddress = %h, RegWrite = %h, state = %b", RegWritemux2to1, Regmux2to1, RegWrite, state);
 		//$display("state = %b, full_instr = %h, readR1 = %h, regA = %h, RegWrite = %h", state, full_instr, readR1, regA, RegWrite);
 	 	//$display("ALU_result = %h", ALU_result);
-		 $display("ALUOut = %h, state = %h", ALUOut, state);
+		$display("ALUOut = %h, state = %h", ALUOut, state);
 	 	//$display("writedata_from_CPU = %h, writedata = %h", writedata_from_CPU, writedata);
 	 	//$display("readdata_to_CPU = %h, readdata = %h", readdata_to_CPU, readdata);
 		//For HI LO
-		$display("HI = %h, LO = %h", HI, LO);
-		//$display("DatatoReg = %h, RegDst = %h, HI_LO_ALUOut = %h", RegWritemux2to1,Regmux2to1,HI_LO_ALUOut);
+		//$display("HI = %h, LO = %h, ALU_HI_LO_MUX = %d", HI, LO, );
+		$display("DatatoReg = %h, RegDst = %h, HI_LO_ALUOut = %h, RegWrite = %d", RegWritemux2to1, Regmux2to1, HI_LO_ALUOut, RegWrite);
 	end
 	
 	
@@ -195,11 +198,11 @@ module mips_cpu_bus (
     	.PC_out(pc_in)
 	);
 	
-	endian_swap swap( // opcode input might not be used
-    		.writedata_from_CPU(regB), .readdata_from_RAM(readdata), .opcode(Decodemux2to1[31:26]),
-			.byteenable_from_CPU(byteenable), 
-			.writedata_to_RAM(writedata), .readdata_to_CPU(readdata_to_CPU)
-    );
+	// endian_swap swap( // opcode input might not be used
+    // 		.writedata_from_CPU(regB), .readdata_from_RAM(readdata), .opcode(Decodemux2to1[31:26]),
+	// 		.byteenable_from_CPU(byteenable), 
+	// 		.writedata_to_RAM(writedata), .readdata_to_CPU(readdata_to_CPU)
+    // );
     
 	
 endmodule : mips_cpu_bus

@@ -9,11 +9,12 @@ module registers(
     output logic[31:0] readdata1,
     output logic[31:0] readdata2,
     //new
-    input logic[3:0] byteenable,
+    //input logic[3:0] byteenable,
     input logic[31:0] instr,
     input logic[2:0] state,
     output logic[31:0] register_v0
 );
+
     logic[5:0] opcode, regimm_rt;
     assign opcode = instr[31:26];
     assign regimm_rt = instr[20:16];
@@ -56,6 +57,7 @@ module registers(
                 register[31] <= writedata;
             end
             //
+            //else if(byteenable == 4'b0001)
             else begin
                 register[writeR] <= writedata;
             end

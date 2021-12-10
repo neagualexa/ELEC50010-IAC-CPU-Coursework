@@ -9,6 +9,8 @@ module ALUmux4to1 (
     logic[31:0] shift_2;
 
     typedef enum logic[5:0]{
+        LUI     = 6'b001111,
+
         ANDI 	= 6'b001100,
 		ORI 	= 6'b001101,
 		XORI 	= 6'b001110
@@ -18,6 +20,9 @@ module ALUmux4to1 (
     //sign extend
         if (opcode == ANDI || opcode == ORI || opcode == XORI) begin
             sign_extended = 32'b0000 + immediate;
+        end
+        else if(opcode == LUI) begin
+            sign_extended = {immediate, 16'b0};
         end
         else begin
             if (immediate [15] == 1) begin
