@@ -110,13 +110,14 @@ module mips_cpu_bus (
 	data_selection_endian_conversion data_selection_endian_conversion(
 		.IorD(IorD),.PC(PC),.ALUOut(HI_LO_ALUOut_to_Reg_mux),
 		.opcode(Decodemux2to1[31:26]),.writedata_non_processed(regB),.readdata_non_processed(readdata),
-		.writedata_processed(writedata),.readdata_processed(readdata_to_CPU),.byteenable(byteenable),.address(address)
+		.writedata_processed(writedata),.readdata_processed(readdata_to_CPU),.byteenable(byteenable),.address(address),
+		.state(state),.stall(stall),.clk(clk)
 	);
 	//assign address = MEMmux2to1;
 	assign Regmux2to1 = (RegDst == 0) ? Decodemux2to1[20:16] : Decodemux2to1[15:11];
 	//          xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx this might not work
 	assign HI_LO_ALUOut_to_Reg_mux = (HI_LO_ALUOut == 0)? ALUOut:(HI_LO_ALUOut == 1)? HI:(HI_LO_ALUOut == 2)? LO:HI_LO_ALUOut_to_Reg_mux;
-	assign RegWritemux2to1 = (MemtoReg == 0) ? HI_LO_ALUOut_to_Reg_mux : readdata_to_CPU;
+	assign RegWritemux2to1 = (MemtoReg == 0) ? PC_RETURN_ADDR_ALOUT_MUX : readdata_to_CPU;
 	assign ALUAmux2to1 = (ALUSrcA == 0) ? PC : regA; 
 
 	
@@ -167,16 +168,17 @@ module mips_cpu_bus (
 	always @(*) begin
 	 	//$display("ALU_MULTorDIV_result = %h", ALU_MULTorDIV_result);
 		//$display("pc_in = %h, pc_out = %h, pcctl = %b, state = %b", pc_in, PC, PCWrite,state);
-	 	$display("ALUA = %h, ALUB = %h ,ALU_MULTorDIV_result = %h", ALUAmux2to1, ALUB, ALU_MULTorDIV_result);
+	 	$display("ALUA = %h, ALUB = %h ,ALU_MULTorDIV_result = %h, unsign=%d", ALUAmux2to1, ALUB, ALU_MULTorDIV_result, unsign);
 		//$display("Write_in_register = %h, RegAddress = %h, RegWrite = %h, state = %b", RegWritemux2to1, Regmux2to1, RegWrite, state);
 		//$display("state = %b, full_instr = %h, readR1 = %h, regA = %h, RegWrite = %h", state, full_instr, readR1, regA, RegWrite);
 	 	//$display("ALU_result = %h", ALU_result);
-		//$display("ALUOut = %h, state = %h", ALUOut, state);
+		$display("ALUOut = %h, state = %h", ALUOut, state);
 	 	//$display("writedata_from_CPU = %h, writedata = %h", writedata_from_CPU, writedata);
-	 	//$display("readdata_to_CPU = %h, readdata = %h, address = %h, byteenable = %b", readdata_to_CPU, readdata, address, byteenable);
+	 	//$display("readdata_to_CPU = %h, readdata = %h, address = %h, byteenable = %b, IorD = %d,state=%d", readdata_to_CPU, readdata, address, byteenable,IorD,state);
+		$display("readdata_to_CPU = %h, writedata = %h, writemem = %d, address = %h, byteenable = %b, IorD = %d,state=%d", readdata_to_CPU, writedata, write,address, byteenable,IorD,state);
 		//For HI LO
-		$display("HI = %h, LO = %h, ALU_HI_LO_MUX = %d", HI, LO, );
-		$display("DatatoReg = %h, RegDst = %h, HI_LO_ALUOut = %h, RegWrite = %d", RegWritemux2to1, Regmux2to1, HI_LO_ALUOut, RegWrite);
+		//$display("HI = %h, LO = %h, ALU_HI_LO_MUX = %d", HI, LO, );
+		$display("DatatoReg = %h, RegDst = %h, HI_LO_ALUOut = %h, RegWrite = %d, state=%d", RegWritemux2to1, Regmux2to1, HI_LO_ALUOut, RegWrite,state);
 	end
 	
 	
@@ -189,7 +191,7 @@ module mips_cpu_bus (
 	);
 
 	//PC_LINK_ADDR
-	assign PC_RETURN_ADDR_ALOUT_MUX = (ReturnToReg==1) ? PC+4 : HI_LO_ALUOut_to_Reg_mux;
+	assign PC_RETURN_ADDR_ALOUT_MUX = (ReturnToReg==1) ? PC+4:HI_LO_ALUOut_to_Reg_mux;
 	
 	//rightmost mux
 	PCmux3to1 pcmux(
