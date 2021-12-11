@@ -15,8 +15,9 @@ module registers(
     output logic[31:0] register_v0
 );
 
-    logic[5:0] opcode, regimm_rt;
+    logic[5:0] opcode, regimm_rt, func_code;
     assign opcode = instr[31:26];
+    assign func_code = instr[5:0];
     assign regimm_rt = instr[20:16];
 
     reg[31:0] register[31:0];
@@ -28,6 +29,10 @@ module registers(
     typedef enum logic[5:0]{
         JAL = 6'b000011
     } opcode_list;
+
+    typedef enum logic[5:0]{
+        JALR = 6'b001001
+    } func_code_list;
 
     typedef enum logic[4:0]{
         BGEZAL = 5'b10001,
@@ -55,6 +60,14 @@ module registers(
             //
             if((opcode == JAL) | (regimm_rt == BGEZAL) | (regimm_rt == BLTZAL)) begin
                 register[31] <= writedata;
+            end
+            else if(opcode == 0 && func_code == JALR) begin
+                if(writeR == 0) begin 
+                    register[31] <= writedata;
+                end 
+                else begin
+                register[writeR] <= writedata;
+                end
             end
             //
             //else if(byteenable == 4'b0001)

@@ -43,7 +43,8 @@ module alu(
 
 	assign A_unsign = {1'b0 + a};
 	assign B_unsign = {1'b0 + b};
-    assign zero = (ALU_result == 0) ? 1 : (branch_equal == 1) ? 1 : 0;
+    assign zero = (ALU_result == 0) ? (branch_equal==1)?0:1 :(branch_equal == 1) ? 1 : 0;
+	
 	//BEQ: SUBTRACT a - b = alu_out = 0 => [(zero = 1 & PCWriteCond) | JUMP = pc_ctr_jump , PCWrite]
 	//BGEZ: SET_GREATER_OR_EQUAL (a >= b) = alu_out (boolean) =0 => [(zero=1 & PCWriteCond) | JUMP = pc_ctr_jump , PCWrite]
 	

@@ -151,6 +151,7 @@ module control_signal_simplified (
 		unsign = 0;
 		fixed_shift = 0;
 		branch_equal = 0;
+		PC_RETURN_ADDR = 0;
 	
 	// we should set everything to their default values for every instruction fetched 
 		
@@ -324,8 +325,13 @@ module control_signal_simplified (
 
 					JALR: begin
 						//ALUout <= PC + 4; (which is PC+8? since already added 4 in fetch state
-						ALUSrcA = 0;
-						ALUSrcB = 2'b01;
+						// ALUSrcA = 0;
+						// ALUSrcB = 2'b01;
+						// ALUctl = ADD;
+
+						//calculate address
+						ALUSrcA = 1;
+						ALUSrcB = 2'b00;
 						ALUctl = ADD;
 					end
 
@@ -408,8 +414,8 @@ module control_signal_simplified (
 						ALUctl = ADD;
 					end
 
-					LWL,LWR: begin //16 bit sign offset + PC
-						ALUSrcA = 0;
+					LWL,LWR: begin //16 bit sign offset + base register[21:25]
+						ALUSrcA = 1;
 						ALUSrcB = 2'b10;
 						ALUctl = ADD;
 					end
@@ -466,12 +472,11 @@ module control_signal_simplified (
 					//JUMP_Instruction	
 					JALR: begin
 						//rd <= ALUOut; 
+						PC_RETURN_ADDR = 1;
 						RegWrite = 1;
 						RegDst = 1;
 						MemtoReg = 0;
 						//PC <= rs;
-						ALUSrcA = 1;
-						ALUSrcB = 2'b00;
 						PCSource = 1;
 						JUMP  = 1;
 					end
@@ -511,6 +516,7 @@ module control_signal_simplified (
 						PCWriteCond = 1;
 						//PC+8
 						PC_RETURN_ADDR = 1;
+						RegWrite  = 1;
 					end
 
 					BLTZAL: begin
@@ -520,6 +526,7 @@ module control_signal_simplified (
 						PCWriteCond = 1;
 						//PC+8
 						PC_RETURN_ADDR = 1;
+						RegWrite  = 1;
 					end
 				endcase
 			end
@@ -565,6 +572,7 @@ module control_signal_simplified (
 						//jump
 						PCSource = 2;
 						JUMP = 1;
+						RegWrite =1;
 					end
 					
 					J: begin
