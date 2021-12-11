@@ -56,11 +56,15 @@ if [[ $DIRECTORY == "rtl" && $1 != "help" ]] ; then
 			  
 
 		    if [[ $RESULTFAIL -eq 1 ]] ; then
-			echo "$TESTNAME $INSTRUCTION Fail Compilation"
+			echo -e "$TESTNAME\t$INSTRUCTION\t Fail Compilation"
 		    elif [[ $RESULTFAIL -eq 2 ]] ; then
-			echo "$TESTNAME $INSTRUCTION Fail Execution: Test return wrong value" $(cat ./outputs/CPU_testbench_${TESTNAME}.stdout) ", should be:" $(cat ./expected/CPU_testbench_${TESTNAME}_expected.stdout)
+		    	if [[ $(cat ./outputs/CPU_testbench_${TESTNAME}.stdout) == "" ]] ; then
+		    		echo -e "$TESTNAME\t$INSTRUCTION\t Fail Programm didn't end in the expected nr of cycles."
+		    	else
+				echo -e "$TESTNAME\t$INSTRUCTION\t Fail Execution: Test return wrong value" $(cat ./outputs/CPU_testbench_${TESTNAME}.stdout) ", should be:" $(cat ./expected/CPU_testbench_${TESTNAME}_expected.stdout)
+			fi
 		    else 
-			echo "$TESTNAME $INSTRUCTION Pass"
+			echo -e "$TESTNAME\t$INSTRUCTION\t Pass"
 		    fi
 		    		
 		fi
@@ -107,11 +111,15 @@ if [[ $DIRECTORY == "rtl" && $1 != "help" ]] ; then
 			    
 
 		       if [[ $RESULTFAIL -eq 1 ]] ; then
-			echo "$TESTNAME $INSTRUCTION Fail Compilation"
+			echo -e "$TESTNAME\t$INSTRUCTION\t Fail Compilation"
 		       elif [[ $RESULTFAIL -eq 2 ]] ; then
-			echo "$TESTNAME $INSTRUCTION Fail Execution: Test return wrong value" $(cat ./outputs/CPU_testbench_${TESTNAME}.stdout) ", should be:" $(cat ./expected/CPU_testbench_${TESTNAME}_expected.stdout)
+			if [[ $(cat ./outputs/CPU_testbench_${TESTNAME}.stdout) == "" ]] ; then
+		    		echo -e "$TESTNAME\t$INSTRUCTION\t Fail Programm didn't end in the expected nr of cycles."
+		    	else
+				echo -e "$TESTNAME\t$INSTRUCTION\t Fail Execution: Test return wrong value" $(cat ./outputs/CPU_testbench_${TESTNAME}.stdout) ", should be:" $(cat ./expected/CPU_testbench_${TESTNAME}_expected.stdout)
+			fi
 		       else 
-			echo "$TESTNAME $INSTRUCTION Pass"
+			echo -e "$TESTNAME\t$INSTRUCTION\t Pass"
 		       fi
 		done
 	fi
