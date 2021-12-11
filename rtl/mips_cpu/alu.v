@@ -50,7 +50,7 @@ module alu(
 	
 //have to add all the basic alu instructions which are 15 in total 
 	always @(*) begin
-		if(unsign) begin 
+		if(unsign == 1) begin 
 			case(ALUOperation)
 				// LOGICAL_AND: 			ALU_temp_result = A_unsign & B_unsign;  //bitwise 
 				// LOGICAL_OR: 				ALU_temp_result = A_unsign | B_unsign;
@@ -70,17 +70,21 @@ module alu(
 				//SET_GREATER_OR_EQUAL:	ALU_temp_result = (A_unsign >= B_unsign) ? 0 : 1;
 				//SET_ON_GREATER_THAN:	ALU_temp_result = (A_unsign > B_unsign) ? 0 : 1;
 				//SET_LESS_OR_EQUAL:	ALU_temp_result = (A_unsign <= B_unsign) ? 0 : 1;
-				SET_ON_LESS_THAN:		ALU_temp_result = (A_unsign < B_unsign) ? 1 : 0; // For less then IF a < b result need to be 1 unfortunaly
-
+				SET_ON_LESS_THAN:		begin
+					ALU_temp_result = (A_unsign < B_unsign) ? 1 : 0; // For less then IF a < b result need to be 1 unfortunaly
+				end
 				// SHIFT_RIGHT:			ALU_temp_result = A_unsign >> B_unsign; 
 				// SHIFT_LEFT:			ALU_temp_result = A_unsign << B_unsign;
 				// SHIFT_RIGHT_SIGNED:	ALU_temp_result = A_unsign >>> B_unsign;
 				//NOR: ALU_temp_result = ~ (a | b); 
 				default: ALU_temp_result = 0;
 			endcase
+			
 			ALU_result = ALU_temp_result[31:0];
 		end 
+		
 		else begin
+			
 			case(ALUOperation)
 				LOGICAL_AND: 			ALU_result = a & b;
 				LOGICAL_OR: 			ALU_result = a | b;
@@ -122,5 +126,8 @@ module alu(
 	// always@(*) begin
     // 	$display("ALUSrcA = %b, ALUSrcB= %b",a, b);
     // end
+	// always@(*) begin
+	// 	$display("SET_ON_LESS_THAN: A<B=%d, A=%h, B=%h",(A_unsign < B_unsign),A_unsign,B_unsign);
+	// end
 
 endmodule : alu
