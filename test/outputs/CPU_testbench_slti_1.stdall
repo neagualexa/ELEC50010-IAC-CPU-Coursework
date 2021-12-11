@@ -1,8 +1,8 @@
 RAM : INIT : Loading RAM contents from ./INITIALISED_FILE.txt
 RAM : DATA : Loading DATA contents from ./DATA_MEMORY_FILE.txt
-WARNING: ./ram_tiny_CPU.v:34: $readmemh: Standard inconsistency, following 1364-2005.
+WARNING: ./ram_tiny_CPU.v:34: $readmemh: The behaviour for reg[...] mem[N:0]; $readmemh("...", mem); changed in the 1364-2005 standard. To avoid ambiguity, use mem[0:N] or explicit range parameters $readmemh("...", mem, start, stop);. Defaulting to 1364-2005 behavior.
 WARNING: ./ram_tiny_CPU.v:34: $readmemh(./DATA_MEMORY_FILE.txt): Not enough words in the file for the requested range [0:65535].
-WARNING: ./ram_tiny_CPU.v:35: $readmemh: Standard inconsistency, following 1364-2005.
+WARNING: ./ram_tiny_CPU.v:35: $readmemh: The behaviour for reg[...] mem[N:0]; $readmemh("...", mem); changed in the 1364-2005 standard. To avoid ambiguity, use mem[0:N] or explicit range parameters $readmemh("...", mem, start, stop);. Defaulting to 1364-2005 behavior.
 WARNING: ./ram_tiny_CPU.v:35: $readmemh(./INITIALISED_FILE.txt): Not enough words in the file for the requested range [0:65535].
 VCD info: dumpfile CPU_testbench.vcd opened for output.
 ram: read = 0, wordaddress = xxxxxxxx, readdata = xxxxxxxx
@@ -277,3 +277,4 @@ ALUOut = 00000000, state = 0
 readdata_to_CPU = 00000000, writedata = xxxxxxxx, writemem = 0, address = 00000004, byteenable = 1111, IorD = 0,state=0
 DatatoReg = 00000000, RegDst = 00, HI_LO_ALUOut = 0, RegWrite = 0, state=0
  RESULT: 00000001
+./CPU_testbench.v:104: $finish called at 220 (1s)

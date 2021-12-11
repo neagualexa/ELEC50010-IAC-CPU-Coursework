@@ -95,7 +95,7 @@ module ram_tiny_CPU (
     end*/
 
     always @(*) begin
-        $display("write_temp=%d",writedata_temp)
+        $display("write_temp=%d, byteenable",writedata_temp, byteenable)
     end
 
 
