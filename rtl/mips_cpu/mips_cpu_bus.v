@@ -168,7 +168,7 @@ module mips_cpu_bus (
 	always @(*) begin
 	 	//$display("ALU_MULTorDIV_result = %h", ALU_MULTorDIV_result);
 		//$display("pc_in = %h, pc_out = %h, pcctl = %b, state = %b", pc_in, PC, PCWrite,state);
-	 	$display("ALUA = %h, ALUB = %h ,ALU_MULTorDIV_result = %h", ALUAmux2to1, ALUB, ALU_MULTorDIV_result);
+	 	$display("ALUA = %h, ALUB = %h ,ALU_MULTorDIV_result = %h, unsign=%d", ALUAmux2to1, ALUB, ALU_MULTorDIV_result, unsign);
 		//$display("Write_in_register = %h, RegAddress = %h, RegWrite = %h, state = %b", RegWritemux2to1, Regmux2to1, RegWrite, state);
 		//$display("state = %b, full_instr = %h, readR1 = %h, regA = %h, RegWrite = %h", state, full_instr, readR1, regA, RegWrite);
 	 	//$display("ALU_result = %h", ALU_result);
