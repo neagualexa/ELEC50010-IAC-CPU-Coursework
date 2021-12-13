@@ -6,6 +6,10 @@ module mips_cpu_bus (
 	output logic[31:0] register_v0,
 
 	// avalon memory mapped bus controller (master)
+
+	//remember to delete this
+	output logic[2:0] state_pass_to_testbench,
+
 	output logic[31:0] address,
 	output logic write,
 	output logic read,
@@ -20,6 +24,8 @@ module mips_cpu_bus (
 	////state machine
 	logic stall;
 	assign stall = (read==1 || write ==1)? waitrequest:0;
+	//remember to delete this
+	assign state_pass_to_testbench = state;
 	logic[2:0] state;
 	
 	//instruction register
@@ -47,7 +53,7 @@ module mips_cpu_bus (
 	logic[31:0] RegWritemux2to1;
 	logic[31:0] full_instr;
 	logic[31:0] HI_LO_ALUOut_to_Reg_mux;
-	logic[31:0] PC_RETURN_ADDR_ALOUT_MUX;
+	//logic[31:0] PC_RETURN_ADDR_ALOUT_MUX;
 
 	//ALU Variable
     logic[31:0] ALU_result;
@@ -96,14 +102,14 @@ module mips_cpu_bus (
 	assign full_instr = {instr31_26, instr25_21, instr20_16, instr15_0};
 	assign Decodemux2to1 = (state == 3'b001) ? readdata_to_CPU : full_instr; 
 
-	control_signal_simplified control(
+	control_signal_simplified_MINIMIZE control(
 		.opcode(Decodemux2to1[31:26]), .func_code(Decodemux2to1[5:0]), .state(state), .rt_code(Decodemux2to1[20:16]),
 		.RegDst(RegDst), .RegWrite(RegWrite), .ALUSrcA(ALUSrcA), 
 		.ALUSrcB(ALUSrcB), .ALUctl(ALUctl), .PCSource(PCSource),
 		.PCWrite(PCWrite), .PCWriteCond(PCWriteCond), .IorD(IorD), 
 		.MemRead(read), .MemWrite(write), .MemtoReg(MemtoReg),
 		.IRWrite(IRWrite), .unsign(unsign), .fixed_shift(fixed_shift),
-		.JUMP(JUMP), .branch_equal(branch_equal), .PC_RETURN_ADDR(ReturnToReg)
+		.JUMP(JUMP), .branch_equal(branch_equal)
 	);
 	
 	//MUXes 	xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx this might be wrong  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -117,7 +123,7 @@ module mips_cpu_bus (
 	assign Regmux2to1 = (RegDst == 0) ? Decodemux2to1[20:16] : Decodemux2to1[15:11];
 	//          xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx this might not work
 	assign HI_LO_ALUOut_to_Reg_mux = (HI_LO_ALUOut == 0)? ALUOut:(HI_LO_ALUOut == 1)? HI:(HI_LO_ALUOut == 2)? LO:HI_LO_ALUOut_to_Reg_mux;
-	assign RegWritemux2to1 = (MemtoReg == 0) ? PC_RETURN_ADDR_ALOUT_MUX : readdata_to_CPU;
+	assign RegWritemux2to1 = (MemtoReg == 0) ? HI_LO_ALUOut_to_Reg_mux : readdata_to_CPU;
 	assign ALUAmux2to1 = (ALUSrcA == 0) ? PC : regA; 
 
 	
@@ -153,7 +159,7 @@ module mips_cpu_bus (
 		else begin
 			regA <= readdata1;
 			regB <= readdata2;
-			ALUOut <= ALU_result;
+			if(~stall) ALUOut <= ALU_result;
 		end
 	end
 	
@@ -169,6 +175,7 @@ module mips_cpu_bus (
 	 	//$display("ALU_MULTorDIV_result = %h", ALU_MULTorDIV_result);
 		//$display("pc_in = %h, pc_out = %h, pcctl = %b, state = %b", pc_in, PC, PCWrite,state);
 	 	$display("ALUA = %h, ALUB = %h ,ALU_MULTorDIV_result = %h, unsign=%d", ALUAmux2to1, ALUB, ALU_MULTorDIV_result, unsign);
+		
 		//$display("Write_in_register = %h, RegAddress = %h, RegWrite = %h, state = %b", RegWritemux2to1, Regmux2to1, RegWrite, state);
 		//$display("state = %b, full_instr = %h, readR1 = %h, regA = %h, RegWrite = %h", state, full_instr, readR1, regA, RegWrite);
 	 	//$display("ALU_result = %h", ALU_result);
@@ -179,6 +186,9 @@ module mips_cpu_bus (
 		//For HI LO
 		//$display("HI = %h, LO = %h, ALU_HI_LO_MUX = %d", HI, LO, );
 		$display("DatatoReg = %h, RegDst = %h, HI_LO_ALUOut = %h, RegWrite = %d, state=%d", RegWritemux2to1, Regmux2to1, HI_LO_ALUOut, RegWrite,state);
+		$display("waitrequest = %h, state=%h, stall = %h", waitrequest, state, stall);
+		
+		//$display("Readdata_to_CPU = %h",)
 	end
 	
 	
@@ -191,7 +201,7 @@ module mips_cpu_bus (
 	);
 
 	//PC_LINK_ADDR
-	assign PC_RETURN_ADDR_ALOUT_MUX = (ReturnToReg==1) ? PC+4:HI_LO_ALUOut_to_Reg_mux;
+	//assign PC_RETURN_ADDR_ALOUT_MUX = (ReturnToReg==1) ? PC+4:HI_LO_ALUOut_to_Reg_mux;
 	
 	//rightmost mux
 	PCmux3to1 pcmux(

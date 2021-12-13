@@ -72,8 +72,8 @@ module ram_tiny_CPU (
     
     always_ff @(posedge clk) begin
         //$display("RAM : INFO : read=%h, addr = %h, mem=%h", read, address, memory[address]);
-        //waitrequest <= $urandom_range(0, 1);
-        waitrequest <= 0;
+        waitrequest <= $urandom_range(0, 1);
+        //waitrequest <= 0;
         if (waitrequest) begin 
             readdata <= 32'hxxxxxxxx;
         end
@@ -86,4 +86,5 @@ module ram_tiny_CPU (
             readdata <= {readdata_3, readdata_2, readdata_1, readdata_0};
         end
     end
+ 
 endmodule

@@ -33,7 +33,7 @@ module CPU_testbench (
 
         clk = 0;
         counter = 1;
-        //waitrequest = 0;
+        //std::randomize(waitrequest);
         
         repeat (TIMEOUT_CYCLES) begin
             #5
@@ -56,47 +56,105 @@ module CPU_testbench (
         reset = 0;
         //FETCH instr 1
         $display(" OUT:  ------------------- %d --------------------------", counter);
-        $display(" OUT:  FETCH         - readdata_to_CPU: %h, ALUOut: %h, opcode: %b",readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
-
+        //$display(" OUT:  FETCH         - readdata_to_CPU: %h, ALUOut: %h, opcode: %b",readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+        $display(" OUT:  state = %d         - readdata_to_CPU: %h, ALUOut: %h, opcode: %b", state, readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+        if(state == 4) begin
+            $display(" OUT:  WRITE_BACK    - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+            $display(" RESULT: Instruction %d has result($v0) : %h, active = %d", counter, register_v0, active);
+            counter = 1+counter;  
+        end
         @(negedge clk);
         assert(active == 1) else $fatal(1, "CPU didn't go active after reset");
         //DECODE instr 1
-        $display(" OUT:  DECODE        - readdata_to_CPU: %h, ALUOut: %h, opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+        //$display(" OUT:  DECODE        - readdata_to_CPU: %h, ALUOut: %h, opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+        $display(" OUT:  state = %d        - readdata_to_CPU: %h, ALUOut: %h, opcode: %b", state, readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+        if(state == 4) begin
+            $display(" OUT:  WRITE_BACK    - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+            $display(" RESULT: Instruction %d has result($v0) : %h, active = %d", counter, register_v0, active);
+            counter = 1+counter;  
+        end
         @(negedge clk);
         //EX instr 1
-        $display(" OUT:  EXECUTE       - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+        //$display(" OUT:  EXECUTE       - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+        $display(" OUT:  state = %d        - readdata_to_CPU: %h, ALUOut: %h, opcode: %b", state, readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+        if(state == 4) begin
+            $display(" OUT:  WRITE_BACK    - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+            $display(" RESULT: Instruction %d has result($v0) : %h, active = %d", counter, register_v0, active);
+            counter = 1+counter;  
+        end
+
         @(negedge clk);
         //MEMORY_ACCESS instr 1
-        $display(" OUT:  MEMORY_ACCESS - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+        //$display(" OUT:  MEMORY_ACCESS - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+        $display(" OUT:  state = %d        - readdata_to_CPU: %h, ALUOut: %h, opcode: %b", state, readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+        if(state == 4) begin
+            $display(" OUT:  WRITE_BACK    - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+            $display(" RESULT: Instruction %d has result($v0) : %h, active = %d", counter, register_v0, active);
+            counter = 1+counter;  
+        end
+
         @(negedge clk);
         //WRITE_BACK instr 1
-        $display(" OUT:  WRITE_BACK    - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
-        counter = 1+counter;
+        //$display(" OUT:  WRITE_BACK    - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+        $display(" OUT:  state = %d        - readdata_to_CPU: %h, ALUOut: %h, opcode: %b", state, readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+        if(state == 4) begin
+            $display(" OUT:  WRITE_BACK    - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+            $display(" RESULT: Instruction %d has result($v0) : %h, active = %d", counter, register_v0, active);
+            counter = 1+counter;  
+        end
+
         
 
         while (active == 1) begin
             @(negedge clk);
             $display(" OUT:  ------------------- %d --------------------------", counter);
             //FETCH instr
-            $display(" OUT:  FETCH         - readdata_to_CPU: %h, ALUOut: %h, opcode: %b",readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
-            
+            //$display(" OUT:  FETCH         - readdata_to_CPU: %h, ALUOut: %h, opcode: %b",readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+            $display(" OUT:  state = %d        - readdata_to_CPU: %h, ALUOut: %h, opcode: %b", state, readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+            if(state == 4) begin
+                $display(" OUT:  WRITE_BACK    - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+                $display(" RESULT: Instruction %d has result($v0) : %h, active = %d", counter, register_v0, active);
+                counter = 1+counter;  
+            end
+
             @(negedge clk);
             //DECODE instr
-            $display(" OUT:  DECODE        - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
-            
+            //$display(" OUT:  DECODE        - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+            $display(" OUT:  state = %d        - readdata_to_CPU: %h, ALUOut: %h, opcode: %b", state, readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+            if(state == 4) begin
+                $display(" OUT:  WRITE_BACK    - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+                $display(" RESULT: Instruction %d has result($v0) : %h, active = %d", counter, register_v0, active);
+                counter = 1+counter;  
+            end
+        
             @(negedge clk);
             //EXECUTE instr
-            $display(" OUT:  EXECUTE       - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
-            
+            //$display(" OUT:  EXECUTE       - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+            $display(" OUT:  state = %d        - readdata_to_CPU: %h, ALUOut: %h, opcode: %b", state, readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+            if(state == 4) begin
+                $display(" OUT:  WRITE_BACK    - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+                $display(" RESULT: Instruction %d has result($v0) : %h, active = %d", counter, register_v0, active);
+                counter = 1+counter;  
+            end
+        
             @(negedge clk);
             //MEMORY_ACCESS instr
-            $display(" OUT:  MEMORY_ACCESS - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
-            
+            //$display(" OUT:  MEMORY_ACCESS - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+            $display(" OUT:  state = %d        - readdata_to_CPU: %h, ALUOut: %h, opcode: %b", state, readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+            if(state == 4) begin
+                $display(" OUT:  WRITE_BACK    - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+                $display(" RESULT: Instruction %d has result($v0) : %h, active = %d", counter, register_v0, active);
+                counter = 1+counter;  
+            end
+        
             @(negedge clk);
             //WRITE_BACK instr
-            $display(" OUT:  WRITE_BACK    - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
-            $display(" RESULT: Instruction %d has result($v0) : %h, active = %d", counter, register_v0, active);
-            counter = 1+counter;            
+            if(state == 4) begin
+                $display(" OUT:  WRITE_BACK    - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
+                $display(" RESULT: Instruction %d has result($v0) : %h, active = %d", counter, register_v0, active);
+                counter = 1+counter;  
+            end
+                      
         end
 
         @(negedge clk);
