@@ -58,7 +58,7 @@ module registers(
 
         else if(RegWrite) begin
             //
-            if((opcode == JAL) | (regimm_rt == BGEZAL) | (regimm_rt == BLTZAL)) begin
+            if((opcode == JAL) | (opcode==1 & regimm_rt == BGEZAL) | (opcode==1 & regimm_rt == BLTZAL)) begin
                 register[31] <= writedata;
             end
             else if(opcode == 0 && func_code == JALR) begin
