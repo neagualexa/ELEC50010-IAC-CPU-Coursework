@@ -65,7 +65,7 @@ module alu(
 			 	DIVIDE:					begin									//mandatory
 											quotient_unsign = A_unsign / B_unsign; 
 											remainder_unsign = A_unsign % B_unsign;
-											ALU_MULTorDIV_result = {quotient_unsign[31:0], remainder_unsign[31:0]};
+											ALU_MULTorDIV_result = {remainder_unsign[31:0],quotient_unsign[31:0]};
 										end
 				//SET_GREATER_OR_EQUAL:	ALU_temp_result = (A_unsign >= B_unsign) ? 0 : 1;
 				//SET_ON_GREATER_THAN:	ALU_temp_result = (A_unsign > B_unsign) ? 0 : 1;
@@ -100,7 +100,7 @@ module alu(
 				DIVIDE:					begin 										
 											remainder = a % b;
 											quotient = a / b;
-											ALU_MULTorDIV_result = {quotient, remainder};
+											ALU_MULTorDIV_result = {remainder,quotient};
 										end				
 				SET_GREATER_OR_EQUAL_ZERO:	ALU_result = (a >= 0) ? 0 : 1; //for jump condition also for (a < b)
 				SET_ON_GREATER_THAN_ZERO:	ALU_result = (a > 0) ? 0 : 1; //for jump condition

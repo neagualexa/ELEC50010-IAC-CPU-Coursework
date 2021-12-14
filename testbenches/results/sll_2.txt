@@ -1,1 +1,0 @@
-assert v0 = 0x8b2dd000

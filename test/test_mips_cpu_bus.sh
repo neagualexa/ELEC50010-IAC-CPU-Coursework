@@ -6,9 +6,10 @@ DIRECTORY=$1
 INSTRUCTION=$2
 
 TESTCASES="./test_codes/*.txt"
+cd ./test
 
 #copy the wanted memory txt file into the main one to be tested and run
-if [[ $DIRECTORY == "rtl" && $1 != "help" ]] ; then
+if [[ $DIRECTORY != "" && $1 != "help" ]] ; then
 
 	if [[ $INSTRUCTION != "" ]] ; then
 	    
@@ -27,7 +28,7 @@ if [[ $DIRECTORY == "rtl" && $1 != "help" ]] ; then
 		
 		    #echo "copying $TESTNAME..."
 		    
-		    iverilog -g 2012 -Wall -o CPU_testbench ../rtl/mips_cpu/*.v ./CPU_testbench.v ./ram_tiny_CPU.v
+		    iverilog -g 2012 -Wall -o CPU_testbench ${DIRECTORY}/mips_cpu_bus.v ${DIRECTORY}/mips_cpu/*.v ./CPU_testbench.v ./ram_CPU.v
 		    
 		    if [[ $? -ne 0 ]] ; then
 			RESULTFAIL=1
@@ -80,7 +81,7 @@ if [[ $DIRECTORY == "rtl" && $1 != "help" ]] ; then
 		    cp ./test_codes/$TESTNAME.txt ./INITIALISED_FILE.txt
 		    #echo "copying $i..."
 	    
-	    	    iverilog -g 2012 -Wall -o CPU_testbench ../rtl/mips_cpu/*.v ./CPU_testbench.v ./ram_tiny_CPU.v
+	    	    iverilog -g 2012 -Wall -o CPU_testbench ${DIRECTORY}/mips_cpu/*.v ${DIRECTORY}/mips_cpu_bus.v ./CPU_testbench.v ./ram_CPU.v
 	    
 			
 		    if [[ $? -ne 0 ]] ; then
