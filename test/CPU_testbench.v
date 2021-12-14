@@ -151,7 +151,7 @@ module CPU_testbench (
                             .readdata(readdata),
                             .state_pass_to_testbench(state));
 
-    ram_tiny_CPU ram(   .clk(clk),
+    ram_CPU ram(   .clk(clk),
                         .address(address),
                         .byteenable(byteenable), 
                         .write(write),

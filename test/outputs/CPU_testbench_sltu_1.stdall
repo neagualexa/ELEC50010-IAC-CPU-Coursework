@@ -1,9 +1,9 @@
 RAM : INIT : Loading RAM contents from ./INITIALISED_FILE.txt
 RAM : DATA : Loading DATA contents from ./DATA_MEMORY_FILE.txt
-WARNING: ./ram_tiny_CPU.v:34: $readmemh: Standard inconsistency, following 1364-2005.
-WARNING: ./ram_tiny_CPU.v:34: $readmemh(./DATA_MEMORY_FILE.txt): Not enough words in the file for the requested range [0:65535].
-WARNING: ./ram_tiny_CPU.v:35: $readmemh: Standard inconsistency, following 1364-2005.
-WARNING: ./ram_tiny_CPU.v:35: $readmemh(./INITIALISED_FILE.txt): Not enough words in the file for the requested range [0:65535].
+WARNING: ./ram_CPU.v:34: $readmemh: Standard inconsistency, following 1364-2005.
+WARNING: ./ram_CPU.v:34: $readmemh(./DATA_MEMORY_FILE.txt): Not enough words in the file for the requested range [0:65535].
+WARNING: ./ram_CPU.v:35: $readmemh: Standard inconsistency, following 1364-2005.
+WARNING: ./ram_CPU.v:35: $readmemh(./INITIALISED_FILE.txt): Not enough words in the file for the requested range [0:65535].
 VCD info: dumpfile CPU_testbench.vcd opened for output.
 ram: read = 0, wordaddress = xxxxxxxx, readdata = xxxxxxxx
 ALUA = xxxxxxxx, ALUB = xxxxxxxx ,ALU_MULTorDIV_result = xxxxxxxxxxxxxxxx, unsign=0
