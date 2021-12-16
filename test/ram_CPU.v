@@ -9,8 +9,8 @@ module ram_CPU (
     output logic[31:0] readdata
 );
 
-    parameter RAM_DATA_FILE = "./DATA_MEMORY_FILE.txt";
-    parameter RAM_INIT_FILE = "./INITIALISED_FILE.txt";
+    parameter RAM_DATA_FILE = "./test/DATA_MEMORY_FILE.txt";
+    parameter RAM_INIT_FILE = "./test/INITIALISED_FILE.txt";
 
 // size 2^16
     reg [31:0] memory [65535:0];
@@ -40,6 +40,7 @@ module ram_CPU (
 
     always @(*) begin
     	$display("ram: read = %b, wordaddress = %h, readdata = %h", read, word_address, readdata);
+        $display("ram: write = %b, wordaddress = %h, writedata = %h", write, word_address, writedata);
     end
     
 
@@ -60,7 +61,7 @@ module ram_CPU (
     logic[7:0] writedata_3, writedata_2, writedata_1, writedata_0;
 
 
-     assign writedata_3 = (byteenable[3]) ? writedata[31:24] : readdata_temp[7:0];
+    assign writedata_3 = (byteenable[3]) ? writedata[31:24] : readdata_temp[7:0];
     assign writedata_2 = (byteenable[2]) ? writedata[23:16] : readdata_temp[15:8];
     assign writedata_1 = (byteenable[1]) ? writedata[15:8] : readdata_temp[23:16];
     assign writedata_0 = (byteenable[0]) ? writedata[7:0] : readdata_temp[31:24];

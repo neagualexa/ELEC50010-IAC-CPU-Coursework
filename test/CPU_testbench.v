@@ -17,7 +17,7 @@ module CPU_testbench (
     logic[2:0] state;
     logic[31:0] register_v0;
     
-    parameter TIMEOUT_CYCLES = 100;
+    parameter TIMEOUT_CYCLES = 1000;
     parameter TEST_ID = "XXX_X";
     parameter INSTRUCTION = "XXX";
     parameter RAM_INIT_FILE = "";
@@ -118,13 +118,6 @@ module CPU_testbench (
             end             
         end
 
-        // @(negedge clk);
-        // if(state == 4) begin
-        //     $display(" OUT:  WRITE_BACK    - readdata_to_CPU: %h, ALUOut: %h opcode: %b", readdata_to_CPU, register_v0, readdata_to_CPU[31:26]);
-        //     //$display(" RESULT: Instruction %d has result($v0) : %h, active = %d", counter, register_v0, active);
-        //     counter = 1+counter;  
-        // end
-                 
         $display(" RESULT: %h", register_v0);
         $finish;
         
@@ -148,8 +141,8 @@ module CPU_testbench (
                             .waitrequest(waitrequest),
                             .writedata(writedata), 
                             .byteenable(byteenable),
-                            .readdata(readdata),
-                            .state_pass_to_testbench(state));
+                            .readdata(readdata)
+    );
 
     ram_CPU ram(   .clk(clk),
                         .address(address),

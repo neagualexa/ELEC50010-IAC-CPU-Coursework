@@ -6,10 +6,6 @@ module mips_cpu_bus (
 	output logic[31:0] register_v0,
 
 	// avalon memory mapped bus controller (master)
-
-	//remember to delete this
-	output logic[2:0] state_pass_to_testbench,
-
 	output logic[31:0] address,
 	output logic write,
 	output logic read,
@@ -24,8 +20,6 @@ module mips_cpu_bus (
 	////state machine
 	logic stall;
 	assign stall = (read==1 || write ==1)? waitrequest:0;
-	//remember to delete this
-	assign state_pass_to_testbench = state;
 	logic[2:0] state;
 	
 	//instruction register
@@ -173,7 +167,7 @@ module mips_cpu_bus (
 	
 	always @(*) begin
 	 	//$display("ALU_MULTorDIV_result = %h", ALU_MULTorDIV_result);
-		//$display("pc_in = %h, pc_out = %h, pcctl = %b, state = %b", pc_in, PC, PCWrite,state);
+		$display("pc_in = %h, pc_out = %h, pcctl = %b, state = %b", pc_in, PC, PCWrite,state);
 	 	$display("ALUA = %h, ALUB = %h ,ALU_MULTorDIV_result = %h, unsign=%d", ALUAmux2to1, ALUB, ALU_MULTorDIV_result, unsign);
 		
 		//$display("Write_in_register = %h, RegAddress = %h, RegWrite = %h, state = %b", RegWritemux2to1, Regmux2to1, RegWrite, state);
