@@ -61,14 +61,14 @@ module registers(
             if((opcode == JAL) | (opcode==1 & regimm_rt == BGEZAL) | (opcode==1 & regimm_rt == BLTZAL)) begin
                 register[31] <= writedata;
             end
-            else if(opcode == 0 && func_code == JALR) begin
-                if(writeR == 0) begin 
-                    register[31] <= writedata;
-                end 
-                else begin
-                register[writeR] <= writedata;
-                end
-            end
+            // else if(opcode == 0 && func_code == JALR) begin
+            //     // if(writeR == 0) begin 
+            //     //     register[31] <= writedata;
+            //     // end 
+            //     // else begin
+            //     register[writeR] <= writedata;
+            //     // end
+            // end
             //
             //else if(byteenable == 4'b0001)
             else begin
