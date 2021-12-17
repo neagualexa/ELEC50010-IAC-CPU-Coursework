@@ -1,3 +1,4 @@
+
 #!/bin/bash
 
 RESULTFAIL=0
@@ -28,7 +29,7 @@ if [[ $DIRECTORY != "" && $1 != "help" ]] ; then
 		
 		    #echo "copying $TESTNAME..."
 		    
-		    iverilog -g 2012 -Wall -o ./test/CPU_testbench ${DIRECTORY}/mips_cpu_bus.v ${DIRECTORY}/mips_cpu/*.v ./test/CPU_testbench.v ./test/ram_CPU.v
+		    iverilog -g 2012 -Wall -o ./test/CPU_testbench ${DIRECTORY}/mips_cpu_bus.v ${DIRECTORY}/mips_cpu/*.v ./test/CPU_testbench.v ./test/ram_CPU.v &> /dev/null
 		    
 		    if [[ $? -ne 0 ]] ; then
 			RESULTFAIL=1
@@ -81,7 +82,7 @@ if [[ $DIRECTORY != "" && $1 != "help" ]] ; then
 		    cp ./test/test_codes/$TESTNAME.txt ./test/INITIALISED_FILE.txt
 		    #echo "copying $i..."
 	    
-	    	    iverilog -g 2012 -Wall -o ./test/CPU_testbench ${DIRECTORY}/mips_cpu_bus.v ${DIRECTORY}/mips_cpu/*.v ./test/CPU_testbench.v ./test/ram_CPU.v
+	    	    iverilog -g 2012 -Wall -o ./test/CPU_testbench ${DIRECTORY}/mips_cpu_bus.v ${DIRECTORY}/mips_cpu/*.v ./test/CPU_testbench.v ./test/ram_CPU.v &> /dev/null
 	    
 			
 		    if [[ $? -ne 0 ]] ; then
